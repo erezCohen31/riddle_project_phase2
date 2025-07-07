@@ -1,0 +1,134 @@
+[
+  {
+    "id": 1,
+    "name": "Easy Math",
+    "taskDescription": "What is 5 + 3?",
+    "correctAnswer": "8",
+    "choices": [
+      "7",
+      "8",
+      "9",
+      "6"
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Geography",
+    "taskDescription": "What is the capital of France?",
+    "correctAnswer": "Paris",
+    "choices": [
+      "Paris",
+      "Rome",
+      "Madrid",
+      "Berlin"
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Logic",
+    "taskDescription": "What comes next in the sequence: 2, 4, 6, 8, ?",
+    "correctAnswer": "10",
+    "choices": [
+      "10",
+      "12",
+      "9",
+      "6"
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Science",
+    "taskDescription": "What planet is known as the Red Planet?",
+    "correctAnswer": "Mars",
+    "choices": [
+      "Jupiter",
+      "Mars",
+      "Venus",
+      "Saturn"
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Culture",
+    "taskDescription": "Who painted the Mona Lisa?",
+    "correctAnswer": "Leonardo da Vinci",
+    "choices": [
+      "Vincent van Gogh",
+      "Michelangelo",
+      "Leonardo da Vinci",
+      "Pablo Picasso"
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Easy Math",
+    "taskDescription": "What is 12 / 4?",
+    "correctAnswer": "3",
+    "choices": [
+      "4",
+      "2",
+      "3",
+      "6"
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Geography",
+    "taskDescription": "In which continent is Brazil located?",
+    "correctAnswer": "South America",
+    "choices": [
+      "South America",
+      "Africa",
+      "Asia",
+      "Europe"
+    ]
+  },
+  {
+    "id": 8,
+    "name": "History",
+    "taskDescription": "Who was the first president of the United States?",
+    "correctAnswer": "George Washington",
+    "choices": [
+      "George Washington",
+      "Thomas Jefferson",
+      "Abraham Lincoln",
+      "John Adams"
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Language",
+    "taskDescription": "What is the plural of 'mouse'?",
+    "correctAnswer": "mice",
+    "choices": [
+      "mouses",
+      "mouse",
+      "mice",
+      "meese"
+    ]
+  },
+  {
+    "id": 10,
+    "name": "Logic",
+    "taskDescription": "If you have 3 apples and take away 2, how many do you have?",
+    "correctAnswer": "2",
+    "choices": [
+      "1",
+      "2",
+      "3",
+      "0"
+    ]
+  },
+  {
+    "id": 11,
+    "name": "rf",
+    "taskDescription": "If you have 3 apples and take away 2, how many do you have?",
+    "correctAnswer": "2",
+    "choices": [
+      "1",
+      "2",
+      "3",
+      "0"
+    ]
+  }
+]
