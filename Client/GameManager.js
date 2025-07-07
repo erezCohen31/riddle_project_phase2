@@ -7,8 +7,8 @@ import { showScore } from "./Services/PlayerService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const riddlesPath = path.join(__dirname, 'DB', 'riddles.txt');
-const playersPath = path.join(__dirname, 'DB', 'players.txt');
+const riddlesPath = path.join(__dirname, '..', 'Server', 'DB', 'riddles.json');
+const playersPath = path.join(__dirname, '..', 'Server', 'DB', 'players.json');
 
 
 export default async function RunMainMenu() {

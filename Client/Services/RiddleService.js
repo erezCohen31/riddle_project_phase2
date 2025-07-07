@@ -10,7 +10,7 @@ export async function chooserRiddles(riddlesPath) {
 
         for (let index = 0; index < 2; index++) {
             const randomIndex = Math.floor(Math.random() * riddles.length);
-            const riddle = riddles.splice(randomIndex, 1)[0]; // enlève et récupère
+            const riddle = riddles.splice(randomIndex, 1)[0];
             choosenRiddles.push(riddle);
         }
 
@@ -34,6 +34,7 @@ export async function runRiddles(riddlesPath, player, playersPath) {
     }
 
     player.showStats();
+
     const upperScore = await UpdateTimeOfPlayer(playersPath, player.id, player.totalTime());
 
     if (upperScore) {

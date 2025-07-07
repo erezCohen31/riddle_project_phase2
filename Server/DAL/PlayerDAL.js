@@ -1,5 +1,5 @@
-import { read, write } from "../utils/fileHelper.js";
-import Player from "../Models/Player.js";
+import { read, write } from "../fileHelper.js";
+import Player from "///C:/Users/JBH/OneDrive/Bureau/js/projects/riddle_project_phase2/Client/Models/Player.js";
 
 export async function findOrCreatePlayer(filePath, name) {
 

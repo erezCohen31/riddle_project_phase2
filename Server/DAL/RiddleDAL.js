@@ -1,5 +1,5 @@
 import readline from 'readline-sync';
-import { read, write } from "../utils/fileHelper.js";
+import { read, write } from "../fileHelper.js";
 
 export async function addRiddle(filePath) {
     try {
