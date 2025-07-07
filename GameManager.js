@@ -1,8 +1,9 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
-import MultipleChoiceRiddle from "./classes/MultipliChoiceRiddle.js"
 import readline from 'readline-sync';
-import { addRiddle, read, DeleteRiddleById, updateRiddle, readAll, findOrCreatePlayer, UpdateTimeOfPlayer } from "./utils/Import.js";
+import { findOrCreatePlayer } from "./utils/Import.js";
+import { runRiddles, ModifyRiddlesMenu } from "./Services/RiddleService.js";
+import { showScore } from "./Services/PlayerService.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -31,21 +32,20 @@ export default async function RunMainMenu() {
 
             switch (choice) {
                 case "1":
-                    await RunRiddles(riddlesPath, player)
+                    await runRiddles(riddlesPath, player, playersPath);
                     break;
                 case "2":
                     await ModifyRiddlesMenu(riddlesPath)
                     break
                 case "3":
-                    isQuit = true
-                    await ShowScore(playersPath)
-                    break
+                    await showScore(playersPath);
+                    break;
                 case "4":
                     isQuit = true
                     console.log(`bye bye`);
                     break
                 default:
-                    console.log("not a choice");
+                    console.log("Not a valid choice");
 
                     break;
             }
@@ -58,96 +58,10 @@ export default async function RunMainMenu() {
     }
 }
 
-async function chooserRiddles(riddlesPath) {
-    const riddles = await read(riddlesPath)
-    const choosedRiddles = []
-
-    for (let index = 0; index < 2; index++) {
-        const randomIndex = Math.floor(Math.random() * riddles.length);
-        const chosenRiddle = riddles[randomIndex];
-        choosedRiddles.push(chosenRiddle);
-        riddles.splice(randomIndex, 1);
-
-    }
-    return choosedRiddles;
-}
-
-async function RunRiddles(riddlesPath, player) {
-    const choosenRiddles = await chooserRiddles(riddlesPath);
-
-    for (const riddleData of choosenRiddles) {
-        const riddle = new MultipleChoiceRiddle(riddleData)
-        const time = riddle.startQuestion()
-        console.log(` You took ${time} ms to answer.`);
-
-        player.addTime(time)
-    }
-    player.showStats()
-
-    const upperScore = await UpdateTimeOfPlayer(playersPath, player.id, player.totalTime())
-    if (upperScore) {
-        console.log(`Great job, ${player.name}!
-New record! Time updated.`);
-
-
-    }
-    player.times = []
-
-}
-
-async function ModifyRiddlesMenu(riddlesPath) {
-
-    let isQuit = false
-
-    while (!isQuit) {
-        console.log(`1. Create a new riddle`);
-        console.log(`2. Read all riddles`);
-        console.log(`3. Update an existing riddle`);
-        console.log(`4. Delete a riddle`);
-        console.log(`5. Exit`);
-
-        const choice = readline.question()
-
-
-        switch (choice) {
-            case "1":
-                await addRiddle(riddlesPath)
-                break;
-            case "2":
-                await readAll(riddlesPath);
-                break
-            case "3":
-                const targetIdToUpdate = readline.question("enter id:\n")
-                await updateRiddle(riddlesPath, Number(targetIdToUpdate))
-                break
-            case "4":
-                const targetIdToDelete = readline.question("enter id:\n")
-                await DeleteRiddleById(riddlesPath, Number(targetIdToDelete))
-                break
-            case "5":
-                isQuit = true
-                break
-
-            default:
-                console.log("not a choice");
-
-                break;
-        }
-    }
 
 
 
 
-}
 
-async function ShowScore(playersPath) {
-    const players = await read(playersPath);
-
-    players.sort((a, b) => a.lowestTime - b.lowestTime);
-
-    for (const player of players) {
-        console.log(`${player.name}: ${player.lowestTime}`);
-    }
-}
 
 

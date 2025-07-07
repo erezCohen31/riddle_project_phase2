@@ -1,5 +1,5 @@
 import { read, write } from "../utils/fileHelper.js";
-import Player from "../classes/Player.js";
+import Player from "../Models/Player.js";
 
 export async function findOrCreatePlayer(filePath, name) {
 
@@ -27,28 +27,25 @@ export async function findOrCreatePlayer(filePath, name) {
 
 
 export async function UpdateTimeOfPlayer(filePath, id, time) {
-
-    const players = await read(filePath)
+    const players = await read(filePath);
     const player = players.find(player => player.id === id);
-    if (!player) {
-        console.log("player not exist");
-        return false
 
+    if (!player) {
+        console.log("Player does not exist");
+        return false;
     } else if (player.lowestTime !== 0 && player.lowestTime <= time) {
         console.log(`Existing time is better or equal, no update.`);
-        return false
-
+        return false;
     } else {
-
         try {
-            console.log("player in update" + player);
-
+            console.log("Updating player:", player);
             player.lowestTime = time;
             await write(filePath, players);
             console.log(`Time updated for player ${player.name}: ${time}`);
-            return true
+            return true;
         } catch (err) {
             console.error("Error:", err.message);
+            throw err;
         }
     }
 }

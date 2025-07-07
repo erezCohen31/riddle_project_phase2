@@ -1,8 +1,6 @@
-import { addRiddle, DeleteRiddleById, updateRiddle, readAll, } from "../managers/RiddleManager.js";
+import { addRiddle, DeleteRiddleById, updateRiddle, readAll } from "../DAL/RiddleDAL.js";
 import { read } from "./fileHelper.js";
-import { findOrCreatePlayer, UpdateTimeOfPlayer } from "../managers/PlayerManager.js";
-
-
+import { findOrCreatePlayer, UpdateTimeOfPlayer } from "../DAL/PlayerDAL.js";
 
 export {
     addRiddle,

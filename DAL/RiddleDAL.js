@@ -8,9 +8,9 @@ export async function addRiddle(filePath) {
         riddles.push(newRiddle);
         await write(filePath, riddles);
 
-        console.log("New riddle added !");
+        console.log("New riddle added!");
     } catch (err) {
-        console.error("error :", err.message);
+        console.error("Error:", err.message);
     }
 }
 
@@ -85,6 +85,8 @@ export async function readById(filePath, riddleId) {
 }
 
 export async function readAll(filePath) {
+    console.log("in finction readall");
+
     try {
         const riddles = await read(filePath)
         console.log(`riddle inside readall ${riddles}`);
@@ -104,9 +106,9 @@ export async function updateRiddle(filePath, targetId) {
         const riddles = await read(filePath);
         const riddlesChanged = changeRiddle(riddles, targetId);
         await write(filePath, riddlesChanged);
-        console.log(" riddle changed !");
+        console.log("Riddle updated successfully!");
     } catch (err) {
-        console.error("error :", err.message);
+        console.error("Error:", err.message);
     }
 }
 

@@ -15,10 +15,10 @@ export default class Riddle {
             const answer = readline.question(this.taskDescription + "\n> ")
             if (answer.toLowerCase() === this.correctAnswer.toLowerCase()) {
                 isCorrect = true
-                console.log("correct answer");
+                console.log("Correct answer!");
 
             } else {
-                console.log("not correct try again");
+                console.log("Not correct, try again.");
 
             }
 
