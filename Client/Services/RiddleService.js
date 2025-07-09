@@ -10,7 +10,7 @@ export async function chooserRiddles(riddlesPath) {
 
         for (let index = 0; index < 2; index++) {
             const randomIndex = Math.floor(Math.random() * riddles.length);
-            const riddle = riddles.splice(randomIndex, 1)[0]; // enlève et récupère
+            const riddle = riddles.splice(randomIndex, 1)[0];
             choosenRiddles.push(riddle);
         }
 
@@ -34,6 +34,7 @@ export async function runRiddles(riddlesPath, player, playersPath) {
     }
 
     player.showStats();
+
     const upperScore = await UpdateTimeOfPlayer(playersPath, player.id, player.totalTime());
 
     if (upperScore) {
@@ -41,6 +42,63 @@ export async function runRiddles(riddlesPath, player, playersPath) {
     }
 
     player.times = [];
+}
+function createRiddle(riddles) {
+    const name = readline.question("Category (e.g. Math, Logic, etc.): ");
+    const taskDescription = readline.question("Riddle question: ");
+    const correctAnswer = readline.question("Correct answer: ");
+
+    let isInclude = false;
+    const choices = [];
+
+    while (!isInclude) {
+        for (let i = 0; i < 4; i++) {
+            const choice = readline.question(`Choice ${i + 1}: `);
+            choices.push(choice);
+        }
+
+        if (!choices.includes(correctAnswer)) {
+            console.log("Warning: The correct answer is not among the choices!");
+            choices.length = 0
+        } else {
+            isInclude = true;
+        }
+    }
+
+
+    const newRiddle = {
+        id: riddles.length + 1,
+        name,
+        taskDescription,
+        correctAnswer,
+        choices
+    };
+
+    return newRiddle;
+}
+function changeRiddle(riddles, targetId) {
+
+    const riddle = riddles.find(riddle => riddle.id === targetId);
+    if (!riddle) {
+        console.log(`No riddle found with id ${targetId}`);
+        return riddles;
+    }
+    const fieldToChange = readline.question("What field do you want to change? (name, taskDescription, correctAnswer, choices): ");
+    if (!(fieldToChange in riddle)) {
+        console.log(`Field "${fieldToChange}" does not exist.`);
+        return riddles;
+    }
+    if (fieldToChange === "choices") {
+        const newChoices = [];
+        for (let i = 0; i < 4; i++) {
+            const choice = readline.question(`Choice ${i + 1}: `);
+            newChoices.push(choice);
+        }
+        riddle[fieldToChange] = newChoices;
+    } else {
+        riddle[fieldToChange] = readline.question("enter the new value:")
+    }
+    return riddles
 }
 
 export async function ModifyRiddlesMenu(riddlesPath) {
