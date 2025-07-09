@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: riddle-game-api
+    env: node
+    buildCommand: npm install
+    startCommand: node Server/server.js
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: NODE_ENV
+        value: production
+    plan: free

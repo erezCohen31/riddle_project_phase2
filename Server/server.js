@@ -3,7 +3,7 @@ import riddleRoutes from "./routes/riddleRoutes.js";
 import playerRoutes from "./routes/playerRoutes.js";
 
 const app = express();
-const PORT = 4546;
+const PORT = process.env.PORT || 4546;
 
 app.use(express.json());
 
