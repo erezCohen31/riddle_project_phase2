@@ -1,51 +1,33 @@
-import { read, write } from "../fileHelper.js";
-import Player from "///C:/Users/JBH/OneDrive/Bureau/js/projects/riddle_project_phase2/Client/Models/Player.js";
+import { readFile, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-export async function findOrCreatePlayer(filePath, name) {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const filePath = join(__dirname, '../DB/players.json');
 
+
+
+
+
+export async function write(data) {
     try {
-        const players = await read(filePath);
-        let player = players.find(player => player.name === name);
-
-        if (!player) {
-            player = new Player(name, players.length + 1, 0)
-
-            players.push(player);
-
-            await write(filePath, players);
-            console.log("New player added!");
-        } else {
-            player = new Player(name, player.id, player.lowestTime)
-        }
-
-        return player;
-    } catch (err) {
-        console.error("Error:", err.message);
-        return null;
+        await writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
+        return true;
+    } catch (error) {
+        console.error('Error writing to file:', error.message);
     }
 }
 
-
-export async function UpdateTimeOfPlayer(filePath, id, time) {
-    const players = await read(filePath);
-    const player = players.find(player => player.id === id);
-
-    if (!player) {
-        console.log("Player does not exist");
-        return false;
-    } else if (player.lowestTime !== 0 && player.lowestTime <= time) {
-        console.log(`Existing time is better or equal, no update.`);
-        return false;
-    } else {
-        try {
-            console.log("Updating player:", player);
-            player.lowestTime = time;
-            await write(filePath, players);
-            console.log(`Time updated for player ${player.name}: ${time}`);
-            return true;
-        } catch (err) {
-            console.error("Error:", err.message);
-            throw err;
-        }
+export async function read() {
+    try {
+        const data = await readFile(filePath, 'utf-8');
+        if (!data) return []
+        const content = JSON.parse(data);
+        return content
+    }
+    catch (error) {
+        console.error('Error:', error)
+        return []
     }
 }
