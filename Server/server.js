@@ -7,12 +7,12 @@ const PORT = process.env.PORT || 4546;
 
 app.use(express.json());
 
-app.use('/api/riddles', riddleRoutes);
-app.use('/api/players', playerRoutes);
+app.use('/riddles', riddleRoutes);
+app.use('/players', playerRoutes);
 
-app.get('/api/status', (req, res) => {
-    res.json({ 
-        status: 'Server is running', 
+app.get('/status', (req, res) => {
+    res.json({
+        status: 'Server is running',
         timestamp: new Date(),
         environment: process.env.NODE_ENV || 'development',
         apiVersion: '1.0.0'
@@ -21,14 +21,14 @@ app.get('/api/status', (req, res) => {
 
 app.use((err, req, res, next) => {
     console.error('Error:', err.stack);
-    res.status(500).json({ 
+    res.status(500).json({
         error: 'Internal Server Error',
         message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong!'
     });
 });
 
 app.use((req, res) => {
-    res.status(404).json({ 
+    res.status(404).json({
         error: 'Route not found',
         path: req.path,
         method: req.method
