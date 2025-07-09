@@ -3,7 +3,8 @@ import {
     updatePlayerTime,
     getPlayerById,
     getAllPlayers,
-    deletePlayer
+    deletePlayer,
+    getLeadeboard as getLeadeboardService
 } from '../Service/PlayerService.js';
 
 const handleError = (res, error) => {
@@ -89,7 +90,22 @@ const PlayerController = {
         } catch (error) {
             handleError(res, error);
         }
+    },
+
+    async getLeaderboardController(req, res) {
+        try {
+            const { numbers: lineCountParam } = req.params;
+            const lineCount = parseInt(lineCountParam, 10);
+            const leaderboard = await getLeadeboardService(lineCount);
+            if (!leaderboard) {
+                return res.status(500).json({ message: 'Failed to get the leaderboard' });
+
+            }
+            res.json(leaderboard);
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to get leaderboard' });
+        }
     }
-};
+}
 
 export default PlayerController;

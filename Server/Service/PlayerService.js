@@ -66,7 +66,7 @@ export async function getPlayerById(playerId) {
 export async function getAllPlayers() {
     try {
         const players = await read();
-        return [...players];
+        return players;
     } catch (err) {
         console.error("Error in getAllPlayers:", err.message);
         throw err;
@@ -93,3 +93,24 @@ export async function deletePlayer(playerId) {
         throw err;
     }
 }
+export async function getLeadeboard(lineCount) {
+    try {
+        const players = await read();
+        const leaderboard = players.map(player => ({
+            name: player.name,
+            time: player.lowestTime
+        }));
+
+        leaderboard.sort((a, b) => a.time - b.time);
+
+        return typeof lineCount === 'number'
+            ? leaderboard.slice(0, lineCount)
+            : leaderboard;
+
+    } catch (error) {
+        console.error("Error retrieving the leaderboard:", error);
+        throw error;
+    }
+}
+
+
