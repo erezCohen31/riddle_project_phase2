@@ -96,10 +96,13 @@ export async function deletePlayer(playerId) {
 export async function getLeadeboard(lineCount) {
     try {
         const players = await read();
-        const leaderboard = players.map(player => ({
-            name: player.name,
-            time: player.lowestTime
-        }));
+        const leaderboard = players
+            .filter(player => player.lowestTime !== 0)
+            .map(player => ({
+                name: player.name,
+                time: player.lowestTime
+            }));
+
 
         leaderboard.sort((a, b) => a.time - b.time);
 
