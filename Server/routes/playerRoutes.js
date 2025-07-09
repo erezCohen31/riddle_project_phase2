@@ -8,6 +8,6 @@ router.get('/:id', PlayerController.getPlayer);
 router.post('/', PlayerController.createOrFind);
 router.put('/:id/time', PlayerController.updateTime);
 router.delete('/:id', PlayerController.deletePlayer);
-router.get('players/leaderboard/:numbers', PlayerController.getLeaderboardController);
+router.get('/leaderboard/:numbers', PlayerController.getLeaderboardController);
 
 export default router;
