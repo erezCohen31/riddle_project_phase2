@@ -120,7 +120,7 @@ const PlayerController = {
         }
     },
 
-    async getLeaderboard(limit = 10) {
+    async getLeaderboard(limit) {
         if (isNaN(limit) || limit <= 0) {
             limit = 10;
         }

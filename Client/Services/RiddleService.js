@@ -26,8 +26,8 @@ const RiddleService = {
         try {
             const riddles = await RiddleController.getAllRiddles();
             const choosenRiddles = [];
-
-            for (let index = 0; index < 2; index++) {
+            const numOfChossen = readline.question("enter the number of riddles")
+            for (let index = 0; index < numOfChossen; index++) {
                 const randomIndex = Math.floor(Math.random() * riddles.length);
                 const riddle = riddles.splice(randomIndex, 1)[0];
                 choosenRiddles.push(riddle);
