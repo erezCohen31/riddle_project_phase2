@@ -38,5 +38,30 @@
     "name": "NouveauJoueur",
     "times": [],
     "lowestTime": 150.75
+  },
+  {
+    "name": "azsq",
+    "id": 8,
+    "lowestTime": 4
+  },
+  {
+    "name": "aqwx",
+    "id": 9,
+    "lowestTime": 0
+  },
+  {
+    "name": "wxcv",
+    "id": 10,
+    "lowestTime": 0
+  },
+  {
+    "name": "david",
+    "id": 11,
+    "lowestTime": 3
+  },
+  {
+    "name": "haim",
+    "id": 12,
+    "lowestTime": 3
   }
 ]

@@ -41,7 +41,7 @@ const RiddleController = {
 
     async createRiddle(req, res) {
         try {
-            const requestBody = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+            const requestBody = req.body;
 
             const {
                 name = '',
@@ -62,6 +62,7 @@ const RiddleController = {
                 correctAnswer,
                 choices
             });
+
             res.status(201).json(createdRiddle);
         } catch (error) {
             handleError(res, error);
@@ -71,7 +72,7 @@ const RiddleController = {
     async updateRiddle(req, res) {
         try {
             const { id } = req.params;
-            const requestBody = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+            const requestBody = req.body;
             const updatedRiddle = requestBody;
 
             if (!updatedRiddle) {

@@ -26,29 +26,31 @@ export async function findOrCreatePlayer(name) {
 
 export async function updatePlayerTime(playerId, time) {
     try {
-        const players = await read();
-        const player = players.find(p => p.id === playerId);
 
+        const players = await read();
+
+        const player = players.find(p => p.id === playerId);
         if (!player) {
-            console.log("Player does not exist");
             return false;
         }
-
 
 
         if (player.lowestTime !== 0 && player.lowestTime <= time) {
-            console.log(`Existing time is better or equal, no update.`);
             return false;
         }
-        player.lowestTime = time
 
+        const oldTime = player.lowestTime;
+        player.lowestTime = time;
 
         await write(players);
-        console.log(`Time updated for player ${player.name}: ${time}`);
+
         return true;
-    } catch (err) {
-        console.error("Error in updatePlayerTime:", err.message);
-        throw err;
+    } catch (error) {
+        console.error({
+            message: error.message,
+            stack: error.stack,
+            code: error.code
+        });
     }
 }
 
@@ -66,7 +68,7 @@ export async function getPlayerById(playerId) {
 export async function getAllPlayers() {
     try {
         const players = await read();
-        return players;
+        return players || [];
     } catch (err) {
         console.error("Error in getAllPlayers:", err.message);
         throw err;

@@ -11,7 +11,7 @@ const handleError = (res, error) => {
     console.error('Error:', error);
     const status = error.message.includes('not found') ? 404 : 500;
     res.status(status).json({
-        error: error.message || 'Erreur interne du serveur'
+        error: error.message || 'Error in server'
     });
 };
 
@@ -42,7 +42,7 @@ const PlayerController = {
 
             const updated = await updatePlayerTime(parseInt(id), parseFloat(time));
             if (!updated) {
-                return res.status(404).json({ message: 'Player not found or time not better' });
+                return res.json({ message: 'time not updated' });
             }
 
             res.status(200).json({ message: 'Time updated successfully' });

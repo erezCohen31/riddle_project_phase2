@@ -22,10 +22,14 @@ export async function addRiddle({ name, taskDescription, correctAnswer, choices 
         };
 
         riddles.push(newRiddle);
-        await write(riddles);
+        const succes = await write(riddles);
+        if (succes) {
+            console.log("New riddle added successfully!");
+            return newRiddle;
+        } else {
+            return false
+        }
 
-        console.log("New riddle added successfully!");
-        return newRiddle;
     } catch (err) {
         console.error("Error adding riddle:", err.message);
         throw err;
@@ -38,7 +42,6 @@ export async function DeleteRiddleById(id) {
         const riddleId = typeof id === 'string' ? parseInt(id, 10) : id;
 
         if (!Number.isInteger(riddleId)) {
-            console.warn("Invalid ID:", id);
             return null;
         }
 
@@ -70,7 +73,6 @@ export async function readById(id) {
         const riddleId = typeof id === 'string' ? parseInt(id, 10) : id;
 
         if (!Number.isInteger(riddleId)) {
-            console.warn("Invalid ID:", id);
             return null;
         }
 
@@ -80,7 +82,7 @@ export async function readById(id) {
             console.log(`No riddle found with ID ${riddleId}`);
         }
 
-        return riddle || null;
+        return riddle;
     } catch (error) {
         console.error("Error reading riddle by ID:", error.message);
         throw error;
@@ -104,7 +106,6 @@ export async function updateRiddle(id, updatedRiddle) {
         const riddleId = typeof id === 'string' ? parseInt(id, 10) : id;
 
         if (!Number.isInteger(riddleId)) {
-            console.warn(`Invalid riddle ID: ${id}`);
             return null;
         }
 

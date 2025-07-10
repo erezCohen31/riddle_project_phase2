@@ -1,26 +1,17 @@
-import path from 'path';
-import { fileURLToPath } from 'url';
 import readline from 'readline-sync';
-import { findOrCreatePlayer } from "./utils/Import.js";
-import { runRiddles, ModifyRiddlesMenu } from "./Services/RiddleService.js";
-import { showScore } from "./Services/PlayerService.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const riddlesPath = path.join(__dirname, '..', 'Server', 'DB', 'riddles.json');
-const playersPath = path.join(__dirname, '..', 'Server', 'DB', 'players.json');
+import RiddleService from "./Services/RiddleService.js";
+import PlayerService from "./Services/PlayerService.js";
 
 
 export default async function RunMainMenu() {
     try {
-        let isQuit = false
-        const name = readline.question("enter your name:\n")
-        const player = await findOrCreatePlayer(playersPath, name)
-        console.log("Hello " + name);
+        const player = await PlayerService.createOrFindPlayer()
+        console.log("Hello " + player.name);
         if (player.lowestTime > 0) {
             console.log(`Hi ${player.name}! Your previous lowest time was ${player.lowestTime} seconds.`);
 
         }
+        let isQuit = false
 
         while (!isQuit) {
             console.log(`1. To play`);
@@ -32,13 +23,13 @@ export default async function RunMainMenu() {
 
             switch (choice) {
                 case "1":
-                    await runRiddles(riddlesPath, player, playersPath);
-                    break;
+                    await RiddleService.runRiddles(player)
+                    break
                 case "2":
-                    await ModifyRiddlesMenu(riddlesPath)
+                    await ModifyRiddlesMenu()
                     break
                 case "3":
-                    await showScore(playersPath);
+                    await PlayerService.showScore()
                     break;
                 case "4":
                     isQuit = true
@@ -55,6 +46,47 @@ export default async function RunMainMenu() {
 
     } catch (err) {
         console.error("An unexpected error occurred:", err.message);
+    }
+
+}
+async function ModifyRiddlesMenu() {
+    let isQuit = false;
+
+    while (!isQuit) {
+        console.log('\n=== Riddle Management ===');
+        console.log('1. Create a new riddle');
+        console.log('2. Read all riddles');
+        console.log('3. Update an existing riddle');
+        console.log('4. Delete a riddle');
+        console.log('5. Exit\n');
+
+        try {
+            const choice = readline.question('Enter your choice (1-5): ').trim();
+
+            switch (choice) {
+                case '1':
+                    await RiddleService.createRiddle();
+                    console.log('Riddle created successfully!');
+                    break;
+                case '2':
+                    await RiddleService.showAllRiddles();
+                    break;
+                case '3':
+                    await RiddleService.changeRiddle();
+                    break;
+                case '4':
+                    await RiddleService.deleteRiddle();
+                    break;
+                case '5':
+                    isQuit = true;
+                    console.log('Exiting riddle management...');
+                    break;
+                default:
+                    console.log('Invalid choice. Please enter a number between 1 and 5.');
+            }
+        } catch (error) {
+            console.error(`Error: ${error.message}`);
+        }
     }
 }
 
