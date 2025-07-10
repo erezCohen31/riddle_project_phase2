@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:4546';
+const API_URL = 'https://riddle-game-api.onrender.com';
 
 
 const RiddleController = {

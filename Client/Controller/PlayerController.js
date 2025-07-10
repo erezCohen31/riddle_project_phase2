@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:4546';
+const API_URL = 'https://riddle-game-api.onrender.com';
 
 const handleResponse = async (response) => {
     if (!response.ok) {
@@ -28,9 +28,7 @@ const PlayerController = {
         }
 
         try {
-            console.log(`Attempting to create/find player with name: ${name}`);
             const url = `${API_URL}/players`;
-            console.log(`Sending request to: ${url}`);
 
             const response = await fetch(url, {
                 method: 'POST',
