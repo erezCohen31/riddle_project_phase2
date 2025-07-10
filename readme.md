@@ -1,58 +1,60 @@
-# 🧩 Riddle Game
+# 🧩 Riddle Game - Phase 2
 
-A command-line riddle game where players can test their problem-solving skills with various challenging riddles.
+An interactive web-based riddle game where players can test their problem-solving skills with various challenging riddles.
 
 ## ✨ Features
 
-- **Player Management**: Track player names and response times
-- **Riddle System**: Manage questions, answers, and timing
+- **Player Management**: Registration, login, and performance tracking
+- **Riddle System**: Question, answer, and timing management
 - **Question Types**: Support for multiple-choice and open-ended questions
-- **Performance Tracking**: Records best time for each player
-- **Interactive Interface**: Simple navigation through a command-line menu
+- **Performance Tracking**: Records best times and scores
+- **User Interface**: Modern and intuitive user experience
+- **RESTful API**: Client-server architecture with API communication
 
 ## 🚀 Installation
 
-1. Make sure you have [Node.js](https://nodejs.org/) (version 14 or higher) installed
+1. Make sure you have [Node.js](https://nodejs.org/) (version 16 or higher) installed
 2. Clone this repository:
    ```bash
-   git clone https://github.com/erezCohen31/riddle-project.git   
-   cd riddle-project
+   git clone https://github.com/erezCohen31/riddle_project_phase2.git
+   cd riddle_project_phase2
    ```
 3. Install dependencies:
    ```bash
    npm install
    ```
-4. Start the game:
+4. Set up environment variables:
+   - Create a `.env` file in the project root
+   - Configure the necessary variables (PORT, DATABASE_URL, etc.)
+
+5. Start the server:
    ```bash
-   node app.js
+   npm start
    ```
 
 ## 🏗️ Project Structure
 
 ```
-riddle-project/
-├── app.js               # Main entry point
-├── GameManager.js       # Main game manager
-├── classes/             # Class definitions
-│   ├── Player.js        # Player data management
-│   └── Riddle.js        # Base riddle structure
-├── managers/           
-│   ├── PlayerManager.js # Player management
-│   └── RiddleManager.js # Riddle management
-├── utils/              
-│   └── Import.js       # Riddle import utility
-|   └── fileHelper.js   # File helper functions
-├── DB/                 # Database files
-│   ├── players.json    # Player data
-│   └── riddles.json    # Riddles list
-└── node_modules/       # Dependencies
+riddle_project_phase2/
+├── Client/                 # Client application
+│   ├── Controller/        # Client controllers
+│   ├── Services/          # Business services
+│   └── GameManager.js     # Main game manager
+├── Server/                # API Server
+│   ├── Controller/        # API controllers
+│   ├── Service/           # Business logic
+│   └── Models/            # Data models
+├── node_modules/          # Dependencies
+├── package.json           # Project configuration
+└── readme.md             # This file
 ```
 
-## 🧩 How to Add New Riddles
+## 🧩 How to Play
 
-1. Create a new file in the `DB/riddles/` directory
-2. Export your riddle using the appropriate format
-3. The riddle will be automatically loaded when the game starts
+1. Register or log in to your account
+2. Choose a riddle category
+3. Answer questions within the time limit
+4. Check your ranking and statistics
 
 ## 🛠️ Development
 
@@ -60,6 +62,16 @@ To contribute to the project:
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+3. Commit your changes (`git commit -am 'Add some amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Create a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the `LICENSE` file for details.
+
+## 🙏 Acknowledgments
+
+- [Node.js](https://nodejs.org/)
+- [Express](https://expressjs.com/)
+- All project contributors
