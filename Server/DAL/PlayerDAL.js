@@ -15,19 +15,18 @@ export async function write(data) {
         await writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
         return true;
     } catch (error) {
-        console.error('Error writing to file:', error.message);
+        console.error('Error writing to file:', error);
+        throw new Error(`Failed to write to file: ${error.message}`);
     }
 }
 
 export async function read() {
     try {
         const data = await readFile(filePath, 'utf-8');
-        if (!data) return []
-        const content = JSON.parse(data);
-        return content
-    }
-    catch (error) {
-        console.error('Error:', error)
-        return []
+        if (!data) return [];
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading file:', error);
+        throw new Error(`Failed to read file: ${error.message}`);
     }
 }
