@@ -4,7 +4,8 @@ import readline from 'readline-sync';
 const PlayerService = {
 
     async showScore() {
-        const leaderboard = await PlayerController.getLeaderboard();
+        const limit = readline.question("enter number of player:\n")
+        const leaderboard = await PlayerController.getLeaderboard(limit);
         console.log("\n=== Players Ranking ===");
         leaderboard.forEach(player => {
             console.log(`${player.name}: ${player.time} seconds`);
