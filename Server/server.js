@@ -7,10 +7,10 @@ const PORT = process.env.PORT || 4546;
 
 app.use(express.json());
 
-app.use('/riddles', riddleRoutes);
-app.use('/players', playerRoutes);
+app.use('/api/riddles', riddleRoutes);
+app.use('/api/players', playerRoutes);
 
-app.get('/status', (req, res) => {
+app.get('/api/status', (req, res) => {
     res.json({
         status: 'Server is running',
         timestamp: new Date(),
