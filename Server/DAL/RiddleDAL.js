@@ -71,8 +71,7 @@ const RiddleDal = {
             console.error('❌ Error fetching riddle:', error.message);
             throw error;
         }
-    },
-    async getAllRiddles() {
+    }, async getAllRiddles() {
         try {
             let riddles = [];
 
@@ -80,10 +79,27 @@ const RiddleDal = {
                 riddles = await collection.find({}).toArray();
             });
 
-            console.log(`📋 Retrieved ${riddles.length} riddles.`);
+            console.log(` Retrieved ${riddles.length} riddles.`);
             return riddles;
         } catch (error) {
-            console.error('❌ Error fetching riddles:', error.message);
+            console.error(' Error fetching riddles:', error.message);
+            throw error;
+        }
+    },
+    async getNumRiddles(count) {
+        try {
+            let riddles = [];
+
+            await connectMongoDB(async () => {
+                riddles = await collection.aggregate([
+                    { $sample: { size: count } }
+                ]).toArray()
+            });
+
+            console.log(` Retrieved ${riddles.length} riddles.`);
+            return riddles;
+        } catch (error) {
+            console.error(' Error fetching riddles:', error.message);
             throw error;
         }
     },

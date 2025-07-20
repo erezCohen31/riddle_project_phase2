@@ -89,7 +89,6 @@ const PlayerController = {
             }
 
             const result = await handleResponse(response);
-            console.log('Update time result:', result.message || 'Success');
             return result;
         } catch (error) {
             console.error(`Failed to update time for player ${id}:`, error);

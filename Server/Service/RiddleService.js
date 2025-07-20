@@ -52,6 +52,15 @@ export async function readAll() {
         return [];
     }
 }
+export async function readNumRiddles(count) {
+    try {
+        const riddles = await RiddleDAL.getNumRiddles(count);
+        return riddles || [];
+    } catch (error) {
+        console.error("Error reading riddles:", error);
+        return [];
+    }
+}
 
 export async function updateRiddle(id, updatedRiddle) {
     try {

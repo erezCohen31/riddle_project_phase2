@@ -4,7 +4,19 @@ const API_URL = 'https://riddle-game-api.onrender.com/api';
 const RiddleController = {
     async getAllRiddles() {
         try {
-            const response = await fetch(API_URL + '/riddles');
+            const response = await fetch(`${API_URL}/riddles`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error('Error in getAllRiddles:', error);
+            throw error;
+        }
+    },
+    async getNumOfRiddles(count) {
+        try {
+            const response = await fetch(`${API_URL}/riddles/${count}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

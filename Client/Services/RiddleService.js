@@ -24,16 +24,9 @@ const RiddleService = {
     },
     async chooserRiddles() {
         try {
-            const riddles = await RiddleController.getAllRiddles();
-            const choosenRiddles = [];
-            const numOfChossen = readline.question("enter the number of riddles")
-            for (let index = 0; index < numOfChossen; index++) {
-                const randomIndex = Math.floor(Math.random() * riddles.length);
-                const riddle = riddles.splice(randomIndex, 1)[0];
-                choosenRiddles.push(riddle);
-            }
-
-            return choosenRiddles;
+            const count = readline.question("enter the number of riddles")
+            const riddles = await RiddleController.getNumOfRiddles(count);
+            return riddles;
         } catch (error) {
             console.error('Error in chooserRiddles:', error.message);
             throw error;
@@ -58,9 +51,8 @@ const RiddleService = {
                 await PlayerController.updateTime(player.id, timeInSeconds);
 
                 try {
-                    const updatedPlayer = await PlayerController.getPlayer(player.id);
                     console.log(`\nTotal time for this round: ${timeInSeconds} seconds`);
-                    console.log(`Your best time so far: ${updatedPlayer.lowestTime} seconds`);
+                    console.log(`Your best time so far: ${player.lowestTime} seconds`);
                 } catch (error) {
                     console.log('\nCould not fetch updated player stats, but your time was recorded.');
                     console.log(`Your time for this round: ${timeInSeconds} seconds`);
