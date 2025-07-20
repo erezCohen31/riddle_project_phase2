@@ -1,32 +1,88 @@
-import { readFile, writeFile } from 'node:fs/promises';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { Op } from 'sequelize';
+import Player from '../Models/Player.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const filePath = join(__dirname, '../DB/players.json');
+const PlayerDAL = {
+    async findOrCreatePlayer(name) {
+        try {
+            const [instance, created] = await Player.findOrCreate({
+                where: { name },
+                defaults: { lowestTime: 0 },
+            });
+            return { player: instance, created };
+        } catch (error) {
+            console.error('Error in findOrCreatePlayer:', error);
+            throw error;
+        }
+    },
 
+    async updatePlayerTimeIfLower(id, newTime) {
+        try {
+            const player = await Player.findOne({ where: { id } });
+            if (!player) {
+                console.log('Player not found');
+                return null;
+            }
 
+            if (player.lowestTime === 0 || newTime < player.lowestTime) {
+                player.lowestTime = newTime;
+                await player.save();
+                console.log(`Lowest time updated to ${newTime} for player ${player.name}`);
+            } else {
+                console.log('Existing lowest time is lower or equal, no update needed');
+            }
+            return true;
+        } catch (error) {
+            console.error('Error updating player time:', error);
+            throw error;
+        }
+    },
 
+    async getPlayerById(id) {
+        try {
+            return await Player.findByPk(id);
+        } catch (error) {
+            console.error('Error fetching player by ID:', error);
+            throw error;
+        }
+    },
 
+    async getAllPlayers() {
+        try {
+            return await Player.findAll();
+        } catch (error) {
+            console.error('Error fetching all players:', error);
+            throw error;
+        }
+    },
 
-export async function write(data) {
-    try {
-        await writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
-        return true;
-    } catch (error) {
-        console.error('Error writing to file:', error);
-        throw new Error(`Failed to write to file: ${error.message}`);
+    async deletePlayer(id) {
+        try {
+            const deletedCount = await Player.destroy({ where: { id } });
+            return deletedCount > 0;
+        } catch (error) {
+            console.error('Error deleting player:', error);
+            throw error;
+        }
+    },
+
+    async getLeaderboard(lineCount) {
+        try {
+            const players = await Player.findAll({
+                where: {
+                    lowestTime: {
+                        [Op.not]: 0
+                    }
+                },
+                order: [['lowestTime', 'ASC']],
+                limit: lineCount
+            });
+
+            return players;
+        } catch (error) {
+            console.error('Error fetching leaderboard:', error);
+            throw error;
+        }
     }
-}
+};
 
-export async function read() {
-    try {
-        const data = await readFile(filePath, 'utf-8');
-        if (!data) return [];
-        return JSON.parse(data);
-    } catch (error) {
-        console.error('Error reading file:', error);
-        throw new Error(`Failed to read file: ${error.message}`);
-    }
-}
+export default PlayerDAL;

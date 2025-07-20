@@ -4,7 +4,7 @@ import {
     getPlayerById,
     getAllPlayers,
     deletePlayer,
-    getLeadeboard as getLeadeboardService
+    getLeaderboard
 } from '../Service/PlayerService.js';
 
 const handleError = (res, error) => {
@@ -96,7 +96,7 @@ const PlayerController = {
         try {
             const { numbers: lineCountParam } = req.params;
             const lineCount = parseInt(lineCountParam, 10);
-            const leaderboard = await getLeadeboardService(lineCount);
+            const leaderboard = await getLeaderboard(lineCount);
             if (!leaderboard) {
                 return res.status(500).json({ message: 'Failed to get the leaderboard' });
 
