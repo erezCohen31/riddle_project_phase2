@@ -8,7 +8,7 @@ const PlayerService = {
         const leaderboard = await PlayerController.getLeaderboard(limit);
         console.log("\n=== Players Ranking ===");
         leaderboard.forEach(player => {
-            console.log(`${player.name}: ${player.time} seconds`);
+            console.log(`${player.name}: ${player.lowestTime} seconds`);
         });
         console.log("===========================\n");
     },
