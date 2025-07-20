@@ -14,7 +14,7 @@ app.get('/api/status', (req, res) => {
     res.json({
         status: 'Server is running',
         timestamp: new Date(),
-        environment: process.env.NODE_ENV || 'development',
+        environment: 'development',
         apiVersion: '1.0.0'
     });
 });
