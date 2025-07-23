@@ -4,7 +4,8 @@ import {
     getPlayerById,
     getAllPlayers,
     deletePlayer,
-    getLeaderboard
+    getLeaderboard,
+    updatePlayerRole
 } from '../Service/PlayerService.js';
 import jwt from 'jsonwebtoken';
 
@@ -142,7 +143,34 @@ const PlayerController = {
                 error: "Server error."
             });
         }
+    },
+    async updateRole(req, res) {
+        try {
+            const playerName = req.params.name;
+            const { role } = req.body;
+
+            const validRoles = ['user', 'admin'];
+            if (!validRoles.includes(role)) {
+                return res.status(400).json({ error: 'Invalid role. Allowed roles: user, admin.' });
+            }
+
+            const updatedPlayer = await updatePlayerRole(playerName, role);
+
+            if (!updatedPlayer) {
+                return res.status(404).json({ error: 'Player not found' });
+            }
+
+            res.json({
+                message: 'Player role updated successfully',
+                player: updatedPlayer
+            });
+        } catch (error) {
+            console.error('Error updating player role:', error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
     }
+
+
 
 }
 

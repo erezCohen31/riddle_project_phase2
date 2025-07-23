@@ -1,5 +1,5 @@
 import PlayerDAL from "../DAL/PlayerDAL.js";
-import bcrypt from "bcrypt"
+import bcrypt from "bcrypt";
 
 export async function findOrCreatePlayer(name, password, role = 'guest') {
     try {
@@ -67,6 +67,19 @@ export async function getLeaderboard(lineCount) {
         return await PlayerDAL.getLeaderboard(lineCount);
     } catch (error) {
         console.error("Error retrieving the leaderboard:", error);
+        throw error;
+    }
+}
+
+export async function updatePlayerRole(name, role) {
+    try {
+        return await PlayerDAL.findOneAndUpdate(
+            { name: name },
+            { $set: { role } },
+            { new: true }
+        );
+    } catch (error) {
+        console.error("Error updating player role:", error);
         throw error;
     }
 }

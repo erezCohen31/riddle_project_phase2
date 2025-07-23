@@ -4,6 +4,7 @@ export default class Player {
         this.name = name
         this.times = []
         this.lowestTime = lowestTime
+        this.role = role
     }
     addTime(time) {
         this.times.push(time)

@@ -20,10 +20,30 @@ const PlayerService = {
         return await PlayerController.getPlayers(token);
     },
 
-    async deletePlayer(token) {
-        const id = readline.question("Enter the ID of the player to delete:\n");
-        return await PlayerController.deletePlayer(id, token);
-    },
+    async deletePlayer(role, token) {
+        if (role === "admin") {
+            const id = readline.question("Enter the ID of the player to delete:\n");
+            const confirmation = readline.question(`Are you sure you want to delete player with ID ${id}? (y/n): `).trim().toLowerCase();
+
+            if (confirmation !== 'y') {
+                console.log("Deletion cancelled.");
+                return null;
+            }
+
+            try {
+                await PlayerController.deletePlayer(id, token);
+                console.log("Player deleted successfully.");
+                return true;
+            } catch (error) {
+                console.error("Error deleting player:", error.message);
+                return null;
+            }
+        } else {
+            console.log("Permission denied: Only admin can delete players.");
+            return null;
+        }
+    }
+    ,
 
     async updatePlayerTime(playerId, time, token) {
         return await PlayerController.updateTime(playerId, time, token);
@@ -34,7 +54,31 @@ const PlayerService = {
         const password = readline.question("Enter your password:\n");
         const player = await PlayerController.createOrFindPlayer(name, password);
         return player;
-    }
+    },
+    async changePlayerRole(role, token) {
+        if (role === "admin") {
+            const name = readline.question("Enter the name of the player whose role you want to change:\n").trim();
+            const newRole = readline.question("Enter the new role (e.g. user, admin):\n").trim();
+
+            if (!['user', 'admin'].includes(newRole)) {
+                console.log("Invalid role. Allowed roles: user, admin.");
+                return null;
+            }
+
+            try {
+                await PlayerController.updateRole(name, newRole, token);
+                console.log(`Player role updated successfully to '${newRole}'.`);
+                return true;
+            } catch (error) {
+                console.error("Error updating player role:", error.message);
+                return null;
+            }
+        } else {
+            console.log("Permission denied: Only admin can change player roles.");
+            return null;
+        }
+    },
+
 };
 
 export default PlayerService;
