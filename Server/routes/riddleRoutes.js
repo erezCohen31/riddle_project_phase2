@@ -6,7 +6,7 @@ import { verifyToken, verifyAdmin, verifyUser } from '../middlewares/verifyToken
 const router = Router();
 
 router.get('/count/:count', verifyToken, RiddleController.getNumOfRiddles);
-router.get('/:id', verifyToken, verifyUser, RiddleController.getRiddleById);
+router.get('/', verifyToken, verifyUser, RiddleController.getAllRiddles);
 router.get('/:id', verifyToken, verifyUser, RiddleController.getRiddleById);
 router.post('/', verifyToken, verifyUser, RiddleController.createRiddle);
 router.put('/:id', verifyToken, verifyAdmin, RiddleController.updateRiddle);
