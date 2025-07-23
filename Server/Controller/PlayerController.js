@@ -88,16 +88,24 @@ const PlayerController = {
         try {
             const { name } = req.params;
 
+            const decodeName = req.user.name;
+
+            if (decodeName === name) {
+                return res.status(403).json({ message: "You cannot delete yourself." });
+            }
             const success = await deletePlayer(name);
+
             if (!success) {
-                return res.status(500).json({ message: 'Failed to delete player' });
+                return res.status(404).json({ message: 'Player not found' });
             }
 
             res.status(204).send();
         } catch (error) {
-            handleError(res, error);
+            console.error('Error deleting player:', error);
+            res.status(500).json({ message: error.message });
         }
     },
+
 
     async getLeaderboardController(req, res) {
         try {

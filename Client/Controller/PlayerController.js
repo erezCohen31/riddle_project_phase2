@@ -89,7 +89,7 @@ const PlayerController = {
 
     async deletePlayer(name, token) {
         if (!name) {
-            throw new Error('Player ID is required');
+            throw new Error('Player name is required');
         }
 
         try {
