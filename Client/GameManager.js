@@ -2,53 +2,59 @@ import readline from 'readline-sync';
 import RiddleService from "./Services/RiddleService.js";
 import PlayerService from "./Services/PlayerService.js";
 
-
 export default async function RunMainMenu() {
     try {
-        const { player, token } = await PlayerService.connect()
+        const { player, token } = await PlayerService.connect();
         console.log("Hello " + player.name);
         if (player.lowestTime > 0) {
             console.log(`Hi ${player.name}! Your previous lowest time was ${player.lowestTime} seconds.`);
-
         }
-        let isQuit = false
+
+        let isQuit = false;
 
         while (!isQuit) {
+            console.log(`\nMain Menu:`);
             console.log(`1. To play`);
             console.log(`2. Modify riddles`);
             console.log(`3. Show scores`);
-            console.log(`4. to quit`);
+            console.log(`4. Quit`);
+            if (player.role === 'admin') {
+                console.log(`5. Manage players`);
+            }
 
-            const choice = readline.question()
+            const choice = readline.question();
 
             switch (choice) {
                 case "1":
-                    await RiddleService.runRiddles(player, token)
-                    break
+                    await RiddleService.runRiddles(player, token);
+                    break;
                 case "2":
-                    await ModifyRiddlesMenu(token)
-                    break
+                    await ModifyRiddlesMenu(token);
+                    break;
                 case "3":
-                    await PlayerService.showScore(token)
+                    await PlayerService.showScore(token);
                     break;
                 case "4":
-                    isQuit = true
-                    console.log(`bye bye`);
-                    break
+                    isQuit = true;
+                    console.log(`Bye bye`);
+                    break;
+                case "5":
+                    if (player.role === 'admin') {
+                        await ManagePlayersMenu(token);
+                    } else {
+                        console.log("Unauthorized: Only admins can manage players.");
+                    }
+                    break;
                 default:
                     console.log("Not a valid choice");
-
-                    break;
             }
         }
-
-
 
     } catch (err) {
         console.error("An unexpected error occurred:", err.message);
     }
-
 }
+
 async function ModifyRiddlesMenu(token) {
     let isQuit = false;
 
@@ -66,7 +72,6 @@ async function ModifyRiddlesMenu(token) {
             switch (choice) {
                 case '1':
                     await RiddleService.createRiddle(token);
-                    console.log('Riddle created successfully!');
                     break;
                 case '2':
                     await RiddleService.showAllRiddles(token);
@@ -89,6 +94,41 @@ async function ModifyRiddlesMenu(token) {
         }
     }
 }
+
+async function ManagePlayersMenu(token) {
+    let isQuit = false;
+
+    while (!isQuit) {
+        console.log('\n=== Player Management ===');
+        console.log('1. Change a player\'s role');
+        console.log('2. Delete a player');
+        console.log('3. Exit\n');
+
+        try {
+            const choice = readline.question('Enter your choice (1-3): ').trim();
+
+            switch (choice) {
+                case '1':
+                    const nameToChange = readline.question('Enter the player name: ').trim();
+                    const newRole = readline.question('Enter new role (user/admin): ').trim();
+                    await PlayerService.changePlayerRole(nameToChange, newRole, token);
+                    break;
+                case '2':
+                    const nameToDelete = readline.question('Enter the player name to delete: ').trim();
+                    await PlayerService.deletePlayer(nameToDelete, token);
+                    break;
+                case '3':
+                    isQuit = true;
+                    break;
+                default:
+                    console.log('Invalid choice. Please enter a number between 1 and 3.');
+            }
+        } catch (error) {
+            console.error(`Error: ${error.message}`);
+        }
+    }
+}
+
 
 
 

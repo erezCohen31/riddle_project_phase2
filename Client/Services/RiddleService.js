@@ -6,21 +6,25 @@ import PlayerController from '../Controller/PlayerController.js';
 const NUM_OF_CHOICES = 4;
 
 const RiddleService = {
-    async showAllRiddles(token) {
-        try {
-            const riddles = await RiddleController.getAllRiddles(token);
-            console.log("\n=== Riddles ===");
-            riddles.forEach(riddle => {
-                console.log(`ID: ${riddle.id}`);
-                console.log(`Name: ${riddle.name}`);
-                console.log(`Task Description: ${riddle.taskDescription}`);
-                console.log(`Correct Answer: ${riddle.correctAnswer}`);
-                console.log(`Choices: ${riddle.choices.join(', ')}`);
-                console.log("===========================\n");
-            });
-        } catch (error) {
-            console.error('Error in showAllRiddles:', error.message);
-            throw error;
+    async showAllRiddles(role, token) {
+        if (role === "admin" || role === "user") {
+            try {
+                const riddles = await RiddleController.getAllRiddles(token);
+                console.log("\n=== Riddles ===");
+                riddles.forEach(riddle => {
+                    console.log(`ID: ${riddle.id}`);
+                    console.log(`Name: ${riddle.name}`);
+                    console.log(`Task Description: ${riddle.taskDescription}`);
+                    console.log(`Correct Answer: ${riddle.correctAnswer}`);
+                    console.log(`Choices: ${riddle.choices.join(', ')}`);
+                    console.log("===========================\n");
+                });
+            } catch (error) {
+                console.error('Error in showAllRiddles:', error.message);
+                throw error;
+            }
+        } else {
+            console.log("Permission denied: You must be user or admin to view riddles.");
         }
     },
 
@@ -64,77 +68,89 @@ const RiddleService = {
         }
     },
 
-    async createRiddle(token) {
-        try {
-            const name = readline.question("Category (e.g., Math, Logic, etc.): ").trim();
-            const taskDescription = readline.question("Riddle question: ").trim();
-            const correctAnswer = readline.question("Correct answer: ").trim();
+    async createRiddle(role, token) {
+        if (role === "admin" || role === "user") {
+            try {
+                const name = readline.question("Category (e.g., Math, Logic, etc.): ").trim();
+                const taskDescription = readline.question("Riddle question: ").trim();
+                const correctAnswer = readline.question("Correct answer: ").trim();
 
-            if (!name || !taskDescription || !correctAnswer) {
-                throw new Error('All fields are required');
-            }
-
-            const choices = [];
-            while (true) {
-                for (let i = 0; i < NUM_OF_CHOICES; i++) {
-                    const choice = readline.question(`Choice ${i + 1}: `).trim();
-                    if (!choice) throw new Error('Choice cannot be empty');
-                    choices.push(choice);
+                if (!name || !taskDescription || !correctAnswer) {
+                    throw new Error('All fields are required');
                 }
 
-                if (!choices.includes(correctAnswer)) {
-                    console.log("Warning: The correct answer must be among the choices!");
-                    choices.length = 0; // reset
+                const choices = [];
+                while (true) {
+                    for (let i = 0; i < NUM_OF_CHOICES; i++) {
+                        const choice = readline.question(`Choice ${i + 1}: `).trim();
+                        if (!choice) throw new Error('Choice cannot be empty');
+                        choices.push(choice);
+                    }
+
+                    if (!choices.includes(correctAnswer)) {
+                        console.log("Warning: The correct answer must be among the choices!");
+                        choices.length = 0;
+                    } else {
+                        break;
+                    }
+                }
+
+                const riddle = { name, taskDescription, correctAnswer, choices };
+                await RiddleController.addRiddle(riddle, token);
+                console.log('Riddle created successfully!');
+            } catch (error) {
+                console.error('Error creating riddle:', error.message);
+                throw error;
+            }
+        } else {
+            console.log("Permission denied: You must be user or admin to create riddles.");
+        }
+    },
+
+    async changeRiddle(role, token) {
+        if (role === "admin") {
+            try {
+                const targetId = readline.question('Enter riddle ID to update: ').trim();
+                const field = readline.question("Field to change (name, taskDescription, correctAnswer, choices): ").trim();
+                let newField;
+
+                if (field === "choices") {
+                    const newChoices = [];
+                    for (let i = 0; i < NUM_OF_CHOICES; i++) {
+                        const choice = readline.question(`Choice ${i + 1}: `).trim();
+                        if (!choice) throw new Error('Choice cannot be empty');
+                        newChoices.push(choice);
+                    }
+                    newField = { [field]: newChoices };
                 } else {
-                    break;
+                    const newValue = readline.question(`New value for ${field}: `).trim();
+                    if (!newValue) throw new Error('Value cannot be empty');
+                    newField = { [field]: newValue };
                 }
-            }
 
-            const riddle = { name, taskDescription, correctAnswer, choices };
-            await RiddleController.addRiddle(riddle, token);
-            console.log('Riddle created successfully!');
-        } catch (error) {
-            console.error('Error creating riddle:', error.message);
-            throw error;
+                await RiddleController.updateRiddle(targetId, newField, token);
+                console.log("Riddle updated successfully.");
+            } catch (error) {
+                console.error('Error updating riddle:', error.message);
+                throw error;
+            }
+        } else {
+            console.log("Permission denied: Only admin can update riddles.");
         }
     },
 
-    async changeRiddle(token) {
-        try {
-            const targetId = readline.question('Enter riddle ID to update: ').trim();
-            const field = readline.question("Field to change (name, taskDescription, correctAnswer, choices): ").trim();
-            let newField;
-
-            if (field === "choices") {
-                const newChoices = [];
-                for (let i = 0; i < NUM_OF_CHOICES; i++) {
-                    const choice = readline.question(`Choice ${i + 1}: `).trim();
-                    if (!choice) throw new Error('Choice cannot be empty');
-                    newChoices.push(choice);
-                }
-                newField = { [field]: newChoices };
-            } else {
-                const newValue = readline.question(`New value for ${field}: `).trim();
-                if (!newValue) throw new Error('Value cannot be empty');
-                newField = { [field]: newValue };
+    async deleteRiddle(role, token) {
+        if (role === "admin") {
+            try {
+                const id = readline.question('Enter riddle ID to delete: ').trim();
+                await RiddleController.deleteRiddle(id, token);
+                console.log("Riddle deleted successfully.");
+            } catch (error) {
+                console.error('Error deleting riddle:', error.message);
+                throw error;
             }
-
-            await RiddleController.updateRiddle(targetId, newField, token);
-            console.log("Riddle updated successfully.");
-        } catch (error) {
-            console.error('Error updating riddle:', error.message);
-            throw error;
-        }
-    },
-
-    async deleteRiddle(token) {
-        try {
-            const id = readline.question('Enter riddle ID to delete: ').trim();
-            await RiddleController.deleteRiddle(id, token);
-            console.log("Riddle deleted successfully.");
-        } catch (error) {
-            console.error('Error deleting riddle:', error.message);
-            throw error;
+        } else {
+            console.log("Permission denied: Only admin can delete riddles.");
         }
     }
 };

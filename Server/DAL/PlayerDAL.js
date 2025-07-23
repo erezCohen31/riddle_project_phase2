@@ -77,6 +77,23 @@ const PlayerDAL = {
             console.error('Error fetching leaderboard:', error);
             throw error;
         }
+    },
+
+    async findOneAndUpdate(filter, update, options = {}) {
+        try {
+            const player = await Player.findOne({ where: filter });
+            if (!player) {
+                return null;
+            }
+            await player.update(update);
+            if (options.new) {
+                return player;
+            }
+            return null;
+        } catch (error) {
+            console.error('Error updating player role:', error);
+            throw error;
+        }
     }
 };
 

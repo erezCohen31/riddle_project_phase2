@@ -125,7 +125,28 @@ const PlayerController = {
             console.error('Failed to fetch leaderboard:', error);
             throw new Error(`Unable to fetch leaderboard: ${error.message}`);
         }
+    },
+    async updateRole(name, newRole, token) {
+        try {
+            const response = await fetch(`${API_URL}/${name}/role`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ role: newRole }),
+                credentials: 'include'
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(`Failed to update role for player ${name}:`, error);
+            throw error;
+        }
     }
+
 };
 
 export default PlayerController;
