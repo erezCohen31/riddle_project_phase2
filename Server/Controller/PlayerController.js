@@ -86,10 +86,9 @@ const PlayerController = {
 
     async deletePlayer(req, res) {
         try {
-            const { id } = req.params;
-            const playerId = parseInt(id);
+            const { name } = req.params;
 
-            const success = await deletePlayer(playerId);
+            const success = await deletePlayer(name);
             if (!success) {
                 return res.status(500).json({ message: 'Failed to delete player' });
             }
@@ -146,7 +145,7 @@ const PlayerController = {
     },
     async updateRole(req, res) {
         try {
-            const playerName = req.params.name;
+            const { name } = req.params;
             const { role } = req.body;
 
             const validRoles = ['user', 'admin'];
@@ -154,7 +153,7 @@ const PlayerController = {
                 return res.status(400).json({ error: 'Invalid role. Allowed roles: user, admin.' });
             }
 
-            const updatedPlayer = await updatePlayerRole(playerName, role);
+            const updatedPlayer = await updatePlayerRole(name, role);
 
             if (!updatedPlayer) {
                 return res.status(404).json({ error: 'Player not found' });

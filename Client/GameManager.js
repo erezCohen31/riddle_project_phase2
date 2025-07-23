@@ -17,10 +17,11 @@ export default async function RunMainMenu() {
             console.log(`1. To play`);
             console.log(`2. Modify riddles`);
             console.log(`3. Show scores`);
-            console.log(`4. Quit`);
             if (player.role === 'admin') {
-                console.log(`5. Manage players`);
+                console.log(`4. Manage players`);
             }
+            console.log(`5. Quit`);
+
 
             const choice = readline.question();
 
@@ -35,16 +36,17 @@ export default async function RunMainMenu() {
                     await PlayerService.showScore(token);
                     break;
                 case "4":
-                    isQuit = true;
-                    console.log(`Bye bye`);
-                    break;
-                case "5":
                     if (player.role === 'admin') {
                         await ManagePlayersMenu(token);
                     } else {
                         console.log("Unauthorized: Only admins can manage players.");
                     }
                     break;
+                case "5":
+                    isQuit = true;
+                    console.log(`Bye bye`);
+                    break;
+
                 default:
                     console.log("Not a valid choice");
             }
@@ -109,13 +111,10 @@ async function ManagePlayersMenu(token) {
 
             switch (choice) {
                 case '1':
-                    const nameToChange = readline.question('Enter the player name: ').trim();
-                    const newRole = readline.question('Enter new role (user/admin): ').trim();
-                    await PlayerService.changePlayerRole(nameToChange, newRole, token);
+                    await PlayerService.changePlayerRole(token);
                     break;
                 case '2':
-                    const nameToDelete = readline.question('Enter the player name to delete: ').trim();
-                    await PlayerService.deletePlayer(nameToDelete, token);
+                    await PlayerService.deletePlayer(token);
                     break;
                 case '3':
                     isQuit = true;

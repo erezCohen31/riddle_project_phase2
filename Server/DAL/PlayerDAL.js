@@ -50,9 +50,9 @@ const PlayerDAL = {
         }
     },
 
-    async deletePlayer(id) {
+    async deletePlayer(name) {
         try {
-            const deletedCount = await Player.destroy({ where: { id } });
+            const deletedCount = await Player.destroy({ where: { name } });
             return deletedCount > 0;
         } catch (error) {
             console.error('Error deleting player:', error);
@@ -79,22 +79,22 @@ const PlayerDAL = {
         }
     },
 
-    async findOneAndUpdate(filter, update, options = {}) {
+    async findOneAndUpdate(name, role) {
         try {
-            const player = await Player.findOne({ where: filter });
+            const player = await Player.findOne({ where: { name } });
             if (!player) {
                 return null;
             }
-            await player.update(update);
-            if (options.new) {
-                return player;
-            }
-            return null;
+
+            await player.update({ role });
+
+            return player;
         } catch (error) {
             console.error('Error updating player role:', error);
             throw error;
         }
     }
+
 };
 
 export default PlayerDAL;
