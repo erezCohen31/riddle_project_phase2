@@ -22,20 +22,23 @@ const PlayerController = {
         }
     },
 
-    async createOrFindPlayer(name) {
+    async createOrFindPlayer(name, password) {
         if (!name || typeof name !== 'string' || name.trim().length === 0) {
             throw new Error('Player name is required');
         }
+        if (!password || typeof password !== 'string' || password.trim().length === 0) {
+            throw new Error('Player password is required');
+        }
 
         try {
-            const url = `${API_URL}/players`;
+            const url = `${API_URL}/players/signuporlogin`;
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name: name.trim() })
+                body: JSON.stringify({ name: name.trim(), password: password.trim() })
             });
 
             console.log(`Response status: ${response.status} ${response.statusText}`);

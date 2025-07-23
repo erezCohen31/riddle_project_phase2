@@ -29,11 +29,16 @@ const PlayerService = {
         const success = await PlayerController.updateTime(playerId, time);
         return success;
     },
-    async createOrFindPlayer() {
-        const name = readline.question("enter your name:\n")
-        const player = await PlayerController.createOrFindPlayer(name);
+
+
+    async connect() {
+        const name = readline.question("enter your name:\n");
+        const password = readline.question("enter your password:\n")
+        const player = await PlayerController.createOrFindPlayer(name, password);
         return player;
+
     }
+
 }
 
 export default PlayerService;
