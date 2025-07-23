@@ -1,7 +1,7 @@
 import PlayerDAL from "../DAL/PlayerDAL.js";
 import bcrypt from "bcrypt"
 
-export async function findOrCreatePlayer({ name, password, role }) {
+export async function findOrCreatePlayer(name, password, role) {
     try {
         let player = await PlayerDAL.find(name);
 

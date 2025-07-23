@@ -1,4 +1,4 @@
-const API_URL = 'https://riddle-game-api.onrender.com/api';
+const API_URL = 'https://riddle-game-api.onrender.com/api/players';
 
 const handleResponse = async (response) => {
     if (!response.ok) {
@@ -12,8 +12,10 @@ const PlayerController = {
 
     async getPlayer(id) {
         try {
-            const response = await fetch(`${API_URL}/players/${id}`, {
-                headers: { 'Content-Type': 'application/json' }
+            const response = await fetch(`${API_URL}/${id}`, {
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+
             });
             return await handleResponse(response);
         } catch (error) {
@@ -31,13 +33,14 @@ const PlayerController = {
         }
 
         try {
-            const url = `${API_URL}/players/signuporlogin`;
+            const url = `${API_URL}/signuporlogin`;
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({ name: name.trim(), password: password.trim() })
             });
 
@@ -60,8 +63,10 @@ const PlayerController = {
 
     async getPlayers() {
         try {
-            const response = await fetch(`${API_URL}/players`, {
-                headers: { 'Content-Type': 'application/json' }
+            const response = await fetch(API_URL, {
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
+
             });
             return await handleResponse(response);
         } catch (error) {
@@ -77,11 +82,12 @@ const PlayerController = {
 
         try {
 
-            const response = await fetch(`${API_URL}/players/${id}/time`, {
+            const response = await fetch(`${API_URL}/${id}/time`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                credentials: 'include',
                 body: JSON.stringify({ time: Number(time) }),
             });
 
@@ -108,8 +114,9 @@ const PlayerController = {
         }
 
         try {
-            const response = await fetch(`${API_URL}/players/${id}`, {
-                method: 'DELETE'
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE',
+                credentials: 'include'
             });
 
             await handleResponse(response);
@@ -126,8 +133,9 @@ const PlayerController = {
         }
 
         try {
-            const response = await fetch(`${API_URL}/players/leaderboard/${limit}`, {
-                headers: { 'Content-Type': 'application/json' }
+            const response = await fetch(`${API_URL}/leaderboard/${limit}`, {
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include'
             });
             return await handleResponse(response);
         } catch (error) {
