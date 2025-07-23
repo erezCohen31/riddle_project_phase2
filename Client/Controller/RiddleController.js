@@ -1,10 +1,11 @@
-const API_URL = 'https://riddle-game-api.onrender.com/api';
-
+const API_URL = 'https://riddle-game-api.onrender.com/api/riddles';
 
 const RiddleController = {
     async getAllRiddles() {
         try {
-            const response = await fetch(`${API_URL}/riddles`);
+            const response = await fetch(API_URL, {
+                credentials: 'include'
+            });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -14,22 +15,27 @@ const RiddleController = {
             throw error;
         }
     },
+
     async getNumOfRiddles(count) {
         try {
-            const response = await fetch(`${API_URL}/riddles/count/${count}`);
+            const response = await fetch(`${API_URL}/count/${count}`, {
+                credentials: 'include'
+            });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             return await response.json();
         } catch (error) {
-            console.error('Error in getAllRiddles:', error);
+            console.error('Error in getNumOfRiddles:', error);
             throw error;
         }
     },
 
     async getRiddleById(id) {
         try {
-            const response = await fetch(`${API_URL}/riddles/${id}`);
+            const response = await fetch(`${API_URL}/${id}`, {
+                credentials: 'include'
+            });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -42,8 +48,9 @@ const RiddleController = {
 
     async addRiddle(riddleData) {
         try {
-            const response = await fetch(API_URL + '/riddles', {
+            const response = await fetch(API_URL, {
                 method: 'POST',
+                credentials: 'include',
                 body: JSON.stringify(riddleData),
                 headers: {
                     'Content-Type': 'application/json'
@@ -61,8 +68,9 @@ const RiddleController = {
 
     async updateRiddle(id, riddleData) {
         try {
-            const response = await fetch(`${API_URL}/riddles/${id}`, {
+            const response = await fetch(`${API_URL}/${id}`, {
                 method: 'PUT',
+                credentials: 'include',
                 body: JSON.stringify(riddleData),
                 headers: {
                     'Content-Type': 'application/json'
@@ -80,8 +88,9 @@ const RiddleController = {
 
     async deleteRiddle(id) {
         try {
-            const response = await fetch(`${API_URL}/riddles/${id}`, {
-                method: 'DELETE'
+            const response = await fetch(`${API_URL}/${id}`, {
+                method: 'DELETE',
+                credentials: 'include'
             });
             if (response.status === 204) {
                 return null;

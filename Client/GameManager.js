@@ -5,7 +5,7 @@ import PlayerService from "./Services/PlayerService.js";
 
 export default async function RunMainMenu() {
     try {
-        const player = await PlayerService.createOrFindPlayer()
+        const player = await PlayerService.connect()
         console.log("Hello " + player.name);
         if (player.lowestTime > 0) {
             console.log(`Hi ${player.name}! Your previous lowest time was ${player.lowestTime} seconds.`);

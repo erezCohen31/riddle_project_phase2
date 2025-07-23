@@ -123,7 +123,7 @@ const PlayerController = {
         }
 
         try {
-            const { player, created } = await findOrCreatePlayer({ name, password, role });
+            const { player, created } = await findOrCreatePlayer(name, password, role ?? undefined);
 
             const token = jwt.sign(
                 { id: player.id, name: player.name, role: player.role },
