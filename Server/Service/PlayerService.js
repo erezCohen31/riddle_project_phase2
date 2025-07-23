@@ -1,64 +1,41 @@
-import { read, write } from "../DAL/PlayerDAL.js";
+import PlayerDAL from "../DAL/PlayerDAL.js";
+import bcrypt from "bcrypt";
 
-export async function findOrCreatePlayer(name) {
+export async function findOrCreatePlayer(name, password, role = 'guest') {
     try {
-        const players = await read();
-        let player = players.find(p => p.name === name);
+        let player = await PlayerDAL.find(name);
 
-        if (!player) {
-            const newPlayer = {
-                name: name,
-                id: players.length + 1,
-                lowestTime: 0
-            };
-            players.push(newPlayer);
-            await write(players);
-            console.log("New player added!");
-            return newPlayer;
-        } else {
-            return player;
+        if (player) {
+            const isMatch = await bcrypt.compare(password, player.hashedPassword);
+            if (!isMatch) throw new Error("Incorrect password.");
+            return { player, created: false };
         }
-    } catch (err) {
-        console.error("Error in findOrCreatePlayer:", err.message);
-        throw err;
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const createdPlayer = await PlayerDAL.create({ name, hashedPassword, role });
+        return { player: createdPlayer, created: true };
+
+    } catch (error) {
+        console.error("Error in findOrCreatePlayer:", error.message);
+        throw error;
     }
 }
 
 export async function updatePlayerTime(playerId, time) {
     try {
-
-        const players = await read();
-
-        const player = players.find(p => p.id === playerId);
-        if (!player) {
-            return false;
-        }
-
-
-        if (player.lowestTime !== 0 && player.lowestTime <= time) {
-            return false;
-        }
-
-        const oldTime = player.lowestTime;
-        player.lowestTime = time;
-
-        await write(players);
-
+        await PlayerDAL.updatePlayerTimeIfLower(playerId, time);
         return true;
     } catch (error) {
         console.error({
-            message: error.message,
-            stack: error.stack,
-            code: error.code
+            message: error.message
         });
+        throw error;
     }
 }
 
 export async function getPlayerById(playerId) {
     try {
-        const players = await read();
-        const player = players.find(p => p.id === playerId);
-        return player || null;
+        return await PlayerDAL.getPlayerById(playerId);
     } catch (err) {
         console.error("Error in getPlayerById:", err.message);
         throw err;
@@ -67,55 +44,38 @@ export async function getPlayerById(playerId) {
 
 export async function getAllPlayers() {
     try {
-        const players = await read();
-        return players || [];
+        return await PlayerDAL.getAllPlayers();
     } catch (err) {
         console.error("Error in getAllPlayers:", err.message);
         throw err;
     }
 }
 
-
-export async function deletePlayer(playerId) {
+export async function deletePlayer(playerName) {
     try {
-        const players = await read();
-        const initialLength = players.length;
-        const updatedPlayers = players.filter(p => p.id !== playerId);
-
-        if (updatedPlayers.length === initialLength) {
-            console.log(`No player found with id ${playerId}`);
-            return false;
-        }
-
-        await write(updatedPlayers);
-        console.log(`Player with ID ${playerId} deleted successfully`);
+        await PlayerDAL.deletePlayer(playerName);
+        console.log(`Player ${playerName} deleted successfully`);
         return true;
     } catch (err) {
         console.error("Error deleting player:", err.message);
         throw err;
     }
 }
-export async function getLeadeboard(lineCount) {
+
+export async function getLeaderboard(lineCount) {
     try {
-        const players = await read();
-        const leaderboard = players
-            .filter(player => player.lowestTime !== 0)
-            .map(player => ({
-                name: player.name,
-                time: player.lowestTime
-            }));
-
-
-        leaderboard.sort((a, b) => a.time - b.time);
-
-        return typeof lineCount === 'number'
-            ? leaderboard.slice(0, lineCount)
-            : leaderboard;
-
+        return await PlayerDAL.getLeaderboard(lineCount);
     } catch (error) {
         console.error("Error retrieving the leaderboard:", error);
         throw error;
     }
 }
 
-
+export async function updatePlayerRole(name, role) {
+    try {
+        return await PlayerDAL.findOneAndUpdate(name, role);
+    } catch (error) {
+        console.error("Error updating player role:", error);
+        throw error;
+    }
+}
