@@ -7,7 +7,6 @@ const app = express();
 const PORT = process.env.PORT || 4546;
 
 app.use(express.json());
-app.use(cookieParser());
 
 
 app.use('/api/riddles', riddleRoutes);

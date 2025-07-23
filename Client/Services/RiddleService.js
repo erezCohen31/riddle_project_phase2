@@ -2,12 +2,13 @@ import MultipleChoiceRiddle from '../Models/MultipliChoiceRiddle.js';
 import readline from 'readline-sync';
 import RiddleController from '../Controller/RiddleController.js';
 import PlayerController from '../Controller/PlayerController.js';
-const NUM_OF_CHOICES = 4
-const RiddleService = {
 
-    async showAllRiddles() {
+const NUM_OF_CHOICES = 4;
+
+const RiddleService = {
+    async showAllRiddles(token) {
         try {
-            const riddles = await RiddleController.getAllRiddles();
+            const riddles = await RiddleController.getAllRiddles(token);
             console.log("\n=== Riddles ===");
             riddles.forEach(riddle => {
                 console.log(`ID: ${riddle.id}`);
@@ -22,20 +23,20 @@ const RiddleService = {
             throw error;
         }
     },
-    async chooserRiddles() {
+
+    async chooserRiddles(token) {
         try {
-            const count = readline.question("enter the number of riddles")
-            const riddles = await RiddleController.getNumOfRiddles(count);
-            return riddles;
+            const count = readline.question("Enter the number of riddles: ");
+            return await RiddleController.getNumOfRiddles(count, token);
         } catch (error) {
             console.error('Error in chooserRiddles:', error.message);
             throw error;
         }
     },
 
-    async runRiddles(player) {
+    async runRiddles(player, token) {
         try {
-            const chosenRiddles = await this.chooserRiddles();
+            const chosenRiddles = await this.chooserRiddles(token);
             let totalTime = 0;
 
             for (const riddleData of chosenRiddles) {
@@ -48,22 +49,14 @@ const RiddleService = {
             const timeInSeconds = Math.round(totalTime / 1000);
 
             try {
-                await PlayerController.updateTime(player.id, timeInSeconds);
+                await PlayerController.updateTime(player.id, timeInSeconds, token);
 
-                try {
-                    console.log(`\nTotal time for this round: ${timeInSeconds} seconds`);
-                    console.log(`Your best time so far: ${player.lowestTime} seconds`);
-                } catch (error) {
-                    console.log('\nCould not fetch updated player stats, but your time was recorded.');
-                    console.log(`Your time for this round: ${timeInSeconds} seconds`);
-                }
-
+                console.log(`\nTotal time for this round: ${timeInSeconds} seconds`);
+                console.log(`Your best time so far: ${player.lowestTime} seconds`);
                 console.log(`\nGreat job, ${player.name}!`);
-
             } catch (error) {
                 console.error('\nWarning: Could not update your time on the server.');
                 console.log(`Your time for this round was: ${timeInSeconds} seconds`);
-                console.log('Your score may not have been saved. Please try again later.');
             }
         } catch (error) {
             console.error('Error in runRiddles:', error.message);
@@ -71,7 +64,7 @@ const RiddleService = {
         }
     },
 
-    async createRiddle() {
+    async createRiddle(token) {
         try {
             const name = readline.question("Category (e.g., Math, Logic, etc.): ").trim();
             const taskDescription = readline.question("Riddle question: ").trim();
@@ -81,82 +74,69 @@ const RiddleService = {
                 throw new Error('All fields are required');
             }
 
-            let isInclude = false;
             const choices = [];
-
-            while (!isInclude) {
+            while (true) {
                 for (let i = 0; i < NUM_OF_CHOICES; i++) {
                     const choice = readline.question(`Choice ${i + 1}: `).trim();
-                    if (!choice) {
-                        throw new Error('Choice cannot be empty');
-                    }
+                    if (!choice) throw new Error('Choice cannot be empty');
                     choices.push(choice);
                 }
 
                 if (!choices.includes(correctAnswer)) {
                     console.log("Warning: The correct answer must be among the choices!");
-                    choices.length = 0;
+                    choices.length = 0; // reset
                 } else {
-                    isInclude = true;
+                    break;
                 }
             }
-            const riddle = {
-                name,
-                taskDescription,
-                correctAnswer,
-                choices
-            }
-            await RiddleController.addRiddle(riddle)
 
+            const riddle = { name, taskDescription, correctAnswer, choices };
+            await RiddleController.addRiddle(riddle, token);
+            console.log('Riddle created successfully!');
         } catch (error) {
             console.error('Error creating riddle:', error.message);
             throw error;
         }
     },
 
-    async changeRiddle() {
+    async changeRiddle(token) {
         try {
+            const targetId = readline.question('Enter riddle ID to update: ').trim();
+            const field = readline.question("Field to change (name, taskDescription, correctAnswer, choices): ").trim();
+            let newField;
 
-            const targetIdToUpdate = readline.question('Enter riddle ID to update: ').trim();
-            const fieldToChange = readline.question("What field do you want to change? (name, taskDescription, correctAnswer, choices): ").trim();
-            let newField
-            if (fieldToChange === "choices") {
+            if (field === "choices") {
                 const newChoices = [];
                 for (let i = 0; i < NUM_OF_CHOICES; i++) {
                     const choice = readline.question(`Choice ${i + 1}: `).trim();
-                    if (!choice) {
-                        throw new Error('Choice cannot be empty');
-                    }
+                    if (!choice) throw new Error('Choice cannot be empty');
                     newChoices.push(choice);
                 }
-                newField = { [fieldToChange]: newChoices };
+                newField = { [field]: newChoices };
             } else {
-                const newValue = readline.question(`Enter the new value for ${fieldToChange}: `).trim();
-                if (!newValue) {
-                    throw new Error('Value cannot be empty');
-                }
-                newField = { [fieldToChange]: newValue };
-
+                const newValue = readline.question(`New value for ${field}: `).trim();
+                if (!newValue) throw new Error('Value cannot be empty');
+                newField = { [field]: newValue };
             }
-            await RiddleController.updateRiddle(targetIdToUpdate, newField)
+
+            await RiddleController.updateRiddle(targetId, newField, token);
+            console.log("Riddle updated successfully.");
         } catch (error) {
             console.error('Error updating riddle:', error.message);
             throw error;
         }
     },
-    async deleteRiddle() {
+
+    async deleteRiddle(token) {
         try {
-            const targetIdToDelete = readline.question('Enter riddle ID to delete: ').trim();
-            await RiddleController.deleteRiddle(targetIdToDelete)
+            const id = readline.question('Enter riddle ID to delete: ').trim();
+            await RiddleController.deleteRiddle(id, token);
+            console.log("Riddle deleted successfully.");
         } catch (error) {
-            console.error('Error deleting riddle:', error.message)
-            throw error
+            console.error('Error deleting riddle:', error.message);
+            throw error;
         }
-
-
     }
-
-
 };
 
 export default RiddleService;
