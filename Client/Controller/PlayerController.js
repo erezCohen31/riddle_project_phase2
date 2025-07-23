@@ -9,13 +9,13 @@ const handleResponse = async (response) => {
 };
 
 const PlayerController = {
-
-    async getPlayer(id) {
+    async getPlayer(id, token) {
         try {
             const response = await fetch(`${API_URL}/${id}`, {
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
             return await handleResponse(response);
         } catch (error) {
@@ -40,33 +40,23 @@ const PlayerController = {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                credentials: 'include',
                 body: JSON.stringify({ name: name.trim(), password: password.trim() })
             });
 
-            console.log(`Response status: ${response.status} ${response.statusText}`);
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Error response body:', errorText);
-            }
-
             return await handleResponse(response);
         } catch (error) {
-            console.error('Failed to create or find player. Error details:', error);
-            if (error.response) {
-                console.error('Response error:', await error.response.text());
-            }
+            console.error('Failed to create or find player:', error);
             throw new Error(`Error creating/finding player: ${error.message}`);
         }
     },
 
-    async getPlayers() {
+    async getPlayers(token) {
         try {
             const response = await fetch(API_URL, {
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
-
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
             return await handleResponse(response);
         } catch (error) {
@@ -75,40 +65,29 @@ const PlayerController = {
         }
     },
 
-    async updateTime(id, time) {
+    async updateTime(id, time, token) {
         if (!id || !time || isNaN(time)) {
             throw new Error('Valid player ID and time are required');
         }
 
         try {
-
             const response = await fetch(`${API_URL}/${id}/time`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
-                credentials: 'include',
-                body: JSON.stringify({ time: Number(time) }),
+                body: JSON.stringify({ time: Number(time) })
             });
 
-            if (!response.ok) {
-                const errorText = await response.text().catch(() => 'No error details');
-                console.error('Error response from server:', response.status, errorText);
-                throw new Error(`Server responded with status ${response.status}: ${errorText}`);
-            }
-
-            const result = await handleResponse(response);
-            return result;
+            return await handleResponse(response);
         } catch (error) {
             console.error(`Failed to update time for player ${id}:`, error);
-            if (error.response) {
-                console.error('Response error:', await error.response.text());
-            }
             throw new Error(`Error updating time: ${error.message}`);
         }
     },
 
-    async deletePlayer(id) {
+    async deletePlayer(id, token) {
         if (!id) {
             throw new Error('Player ID is required');
         }
@@ -116,7 +95,9 @@ const PlayerController = {
         try {
             const response = await fetch(`${API_URL}/${id}`, {
                 method: 'DELETE',
-                credentials: 'include'
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
             await handleResponse(response);
@@ -127,15 +108,17 @@ const PlayerController = {
         }
     },
 
-    async getLeaderboard(limit) {
+    async getLeaderboard(limit, token) {
         if (isNaN(limit) || limit <= 0) {
             limit = 10;
         }
 
         try {
             const response = await fetch(`${API_URL}/leaderboard/${limit}`, {
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include'
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
             return await handleResponse(response);
         } catch (error) {

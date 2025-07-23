@@ -5,7 +5,7 @@ import PlayerService from "./Services/PlayerService.js";
 
 export default async function RunMainMenu() {
     try {
-        const player = await PlayerService.connect()
+        const { player, token } = await PlayerService.connect()
         console.log("Hello " + player.name);
         if (player.lowestTime > 0) {
             console.log(`Hi ${player.name}! Your previous lowest time was ${player.lowestTime} seconds.`);
@@ -23,13 +23,13 @@ export default async function RunMainMenu() {
 
             switch (choice) {
                 case "1":
-                    await RiddleService.runRiddles(player)
+                    await RiddleService.runRiddles(player, token)
                     break
                 case "2":
-                    await ModifyRiddlesMenu()
+                    await ModifyRiddlesMenu(token)
                     break
                 case "3":
-                    await PlayerService.showScore()
+                    await PlayerService.showScore(token)
                     break;
                 case "4":
                     isQuit = true
@@ -49,7 +49,7 @@ export default async function RunMainMenu() {
     }
 
 }
-async function ModifyRiddlesMenu() {
+async function ModifyRiddlesMenu(token) {
     let isQuit = false;
 
     while (!isQuit) {
@@ -65,17 +65,17 @@ async function ModifyRiddlesMenu() {
 
             switch (choice) {
                 case '1':
-                    await RiddleService.createRiddle();
+                    await RiddleService.createRiddle(token);
                     console.log('Riddle created successfully!');
                     break;
                 case '2':
-                    await RiddleService.showAllRiddles();
+                    await RiddleService.showAllRiddles(token);
                     break;
                 case '3':
-                    await RiddleService.changeRiddle();
+                    await RiddleService.changeRiddle(token);
                     break;
                 case '4':
-                    await RiddleService.deleteRiddle();
+                    await RiddleService.deleteRiddle(token);
                     break;
                 case '5':
                     isQuit = true;
