@@ -12,6 +12,13 @@ const Player = sequelize.define('Player', {
         unique: true,
         allowNull: false,
     },
+    hashedPassword: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+    },
+    role: {
+        type: DataTypes.STRING,
+    },
     lowestTime: {
         type: DataTypes.INTEGER,
         allowNull: false,

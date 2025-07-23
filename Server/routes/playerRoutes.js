@@ -3,6 +3,7 @@ import PlayerController from '../Controller/PlayerController.js';
 
 const router = Router();
 
+router.post('/signuporlogin', PlayerController.signupOrLogin);
 router.get('/', PlayerController.getAllPlayers);
 router.get('/leaderboard/:numbers', PlayerController.getLeaderboardController);
 router.get('/:id', PlayerController.getPlayer);

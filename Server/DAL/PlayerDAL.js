@@ -2,17 +2,12 @@ import { Op } from 'sequelize';
 import Player from '../Models/Player.js';
 
 const PlayerDAL = {
-    async findOrCreatePlayer(name) {
-        try {
-            const [instance, created] = await Player.findOrCreate({
-                where: { name },
-                defaults: { lowestTime: 0 },
-            });
-            return { player: instance, created };
-        } catch (error) {
-            console.error('Error in findOrCreatePlayer:', error);
-            throw error;
-        }
+    async find(name) {
+        return await Player.findOne({ where: { name } });
+    },
+
+    async create({ name, hashedPassword, role }) {
+        return await Player.create({ name, hashedPassword, role });
     },
 
     async updatePlayerTimeIfLower(id, newTime) {
