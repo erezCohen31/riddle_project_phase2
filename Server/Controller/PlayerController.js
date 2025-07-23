@@ -6,6 +6,9 @@ import {
     deletePlayer,
     getLeaderboard
 } from '../Service/PlayerService.js';
+import jwt from 'jsonwebtoken';
+
+const SECRET = process.env.JWT_SECRET
 
 const handleError = (res, error) => {
     console.error('Error:', error);
@@ -24,8 +27,12 @@ const PlayerController = {
                 return res.status(400).json({ message: 'Valid name is required' });
             }
 
-            const newPlayer = await findOrCreatePlayer(name.trim());
-            res.status(201).json(newPlayer);
+            const { player, created } = await findOrCreatePlayer(name.trim());
+            if (created) {
+                res.status(201).json({ message: "new player added", player });
+            } else {
+                res.status(200).json({ message: `welcome ${player.name}`, player })
+            }
         } catch (error) {
             handleError(res, error);
         }
@@ -105,7 +112,38 @@ const PlayerController = {
         } catch (error) {
             res.status(500).json({ error: 'Failed to get leaderboard' });
         }
+    },
+    async signupOrLogin(req, res) {
+        const { name, password, role } = req.body;
+
+        if (!name || !password) {
+            return res.status(400).json({
+                error: "The 'name' and 'password' fields are required."
+            });
+        }
+
+        try {
+            const { player, created } = await findOrCreatePlayer({ name, password, role });
+
+            const token = jwt.sign(
+                { id: player.id, name: player.name, role: player.role },
+                SECRET,
+                { expiresIn: "1h" }
+            );
+            res.cookie('token', token, {
+                httpOnly: true,
+                sameSite: 'Strict',
+            });
+            const message = created ? "Player successfully created" : "Login successful";
+            return res.status(200).json({ message, token, player });;
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({
+                error: "Server error."
+            });
+        }
     }
+
 }
 
 export default PlayerController;

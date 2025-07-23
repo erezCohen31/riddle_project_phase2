@@ -16,7 +16,7 @@ const RiddleController = {
     },
     async getNumOfRiddles(count) {
         try {
-            const response = await fetch(`${API_URL}/riddles/${count}`);
+            const response = await fetch(`${API_URL}/riddles/count/${count}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }

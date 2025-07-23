@@ -1,12 +1,22 @@
 import PlayerDAL from "../DAL/PlayerDAL.js";
+import bcrypt from "bcrypt"
 
-export async function findOrCreatePlayer(name) {
+export async function findOrCreatePlayer({ name, password, role }) {
     try {
-        const { player, created } = await PlayerDAL.findOrCreatePlayer(name);
-        console.log(created ? 'New player added!' : 'Player already exists.');
-        return player;
+        let player = await PlayerDAL.find(name);
+
+        if (player) {
+            const isMatch = await bcrypt.compare(password, player.hashedPassword);
+            if (!isMatch) throw new Error("Incorrect password.");
+            return { player, created: false };
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const createdPlayer = await PlayerDAL.create({ name, hashedPassword, role });
+        return { player: createdPlayer, created: true };
+
     } catch (error) {
-        console.error('Failed to find or create player:', error);
+        console.error("Error in findOrCreatePlayer:", error.message);
         throw error;
     }
 }
