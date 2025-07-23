@@ -3,7 +3,8 @@ import {
     DeleteRiddleById as deleteRiddleService,
     readById as getRiddleService,
     readAll as getAllRiddlesService,
-    updateRiddle as updateRiddleService
+    updateRiddle as updateRiddleService,
+    readNumRiddles as getNumOfRiddlesService
 } from '../Service/RiddleService.js';
 
 const handleError = (res, error) => {
@@ -18,6 +19,14 @@ const RiddleController = {
     async getAllRiddles(req, res) {
         try {
             const riddles = await getAllRiddlesService();
+            res.status(200).json(riddles);
+        } catch (error) {
+            handleError(res, error);
+        }
+    }, async getNumOfRiddles(req, res) {
+        try {
+            const count = parseInt(req.params.count, 10);
+            const riddles = await getNumOfRiddlesService(count);
             res.status(200).json(riddles);
         } catch (error) {
             handleError(res, error);
@@ -71,10 +80,12 @@ const RiddleController = {
 
     async updateRiddle(req, res) {
         try {
-            const { id } = req.params;
-            const requestBody = req.body;
-            const updatedRiddle = requestBody;
+            const allowedFields = ['name', 'taskDescription', 'correctAnswer', 'choices'];
 
+            const { id } = req.params;
+            const updatedRiddle = Object.fromEntries(
+                Object.entries(req.body).filter(([key]) => allowedFields.includes(key))
+            );
             if (!updatedRiddle) {
                 return res.status(400).json({ message: 'Riddle data is required' });
             }

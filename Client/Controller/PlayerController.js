@@ -1,19 +1,25 @@
-const API_URL = 'https://riddle-game-api.onrender.com';
+const API_URL = 'https://riddle-game-api.onrender.com/api/players';
 
 const handleResponse = async (response) => {
     if (!response.ok) {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.message || `HTTP error! status: ${response.status}`);
     }
-    return response.json();
+    if (response.status === 204) {
+        return null;
+    }
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
 };
 
 const PlayerController = {
-
-    async getPlayer(id) {
+    async getPlayer(id, token) {
         try {
-            const response = await fetch(`${API_URL}/players/${id}`, {
-                headers: { 'Content-Type': 'application/json' }
+            const response = await fetch(`${API_URL}/${id}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
             return await handleResponse(response);
         } catch (error) {
@@ -22,43 +28,39 @@ const PlayerController = {
         }
     },
 
-    async createOrFindPlayer(name) {
+    async createOrFindPlayer(name, password) {
         if (!name || typeof name !== 'string' || name.trim().length === 0) {
             throw new Error('Player name is required');
         }
+        if (!password || typeof password !== 'string' || password.trim().length === 0) {
+            throw new Error('Player password is required');
+        }
 
         try {
-            const url = `${API_URL}/players`;
+            const url = `${API_URL}/signuporlogin`;
 
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ name: name.trim() })
+                body: JSON.stringify({ name: name.trim(), password: password.trim() })
             });
-
-            console.log(`Response status: ${response.status} ${response.statusText}`);
-
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Error response body:', errorText);
-            }
 
             return await handleResponse(response);
         } catch (error) {
-            console.error('Failed to create or find player. Error details:', error);
-            if (error.response) {
-                console.error('Response error:', await error.response.text());
-            }
+            console.error('Failed to create or find player:', error);
             throw new Error(`Error creating/finding player: ${error.message}`);
         }
     },
 
-    async getPlayers() {
+    async getPlayers(token) {
         try {
-            const response = await fetch(`${API_URL}/players`, {
-                headers: { 'Content-Type': 'application/json' }
+            const response = await fetch(API_URL, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
             return await handleResponse(response);
         } catch (error) {
@@ -67,72 +69,87 @@ const PlayerController = {
         }
     },
 
-    async updateTime(id, time) {
+    async updateTime(id, time, token) {
         if (!id || !time || isNaN(time)) {
             throw new Error('Valid player ID and time are required');
         }
 
         try {
-
-            const response = await fetch(`${API_URL}/players/${id}/time`, {
+            const response = await fetch(`${API_URL}/${id}/time`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ time: Number(time) }),
+                body: JSON.stringify({ time: Number(time) })
             });
 
-            if (!response.ok) {
-                const errorText = await response.text().catch(() => 'No error details');
-                console.error('Error response from server:', response.status, errorText);
-                throw new Error(`Server responded with status ${response.status}: ${errorText}`);
-            }
-
-            const result = await handleResponse(response);
-            console.log('Update time result:', result.message || 'Success');
-            return result;
+            return await handleResponse(response);
         } catch (error) {
             console.error(`Failed to update time for player ${id}:`, error);
-            if (error.response) {
-                console.error('Response error:', await error.response.text());
-            }
             throw new Error(`Error updating time: ${error.message}`);
         }
     },
 
-    async deletePlayer(id) {
-        if (!id) {
-            throw new Error('Player ID is required');
+    async deletePlayer(name, token) {
+        if (!name) {
+            throw new Error('Player name is required');
         }
 
         try {
-            const response = await fetch(`${API_URL}/players/${id}`, {
-                method: 'DELETE'
+            const response = await fetch(`${API_URL}/${name}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
             });
 
             await handleResponse(response);
             return true;
         } catch (error) {
-            console.error(`Failed to delete player ${id}:`, error);
+            console.error(`Failed to delete player ${name}:`, error);
             throw new Error(`Error deleting player: ${error.message}`);
         }
     },
 
-    async getLeaderboard(limit) {
+    async getLeaderboard(limit, token) {
         if (isNaN(limit) || limit <= 0) {
             limit = 10;
         }
 
         try {
-            const response = await fetch(`${API_URL}/players/leaderboard/${limit}`, {
-                headers: { 'Content-Type': 'application/json' }
+            const response = await fetch(`${API_URL}/leaderboard/${limit}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
             });
             return await handleResponse(response);
         } catch (error) {
             console.error('Failed to fetch leaderboard:', error);
             throw new Error(`Unable to fetch leaderboard: ${error.message}`);
         }
+    },
+    async updateRole(name, newRole, token) {
+        try {
+            const response = await fetch(`${API_URL}/${name}/role`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ role: newRole })
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return await response.json();
+        } catch (error) {
+            console.error(`Failed to update role for player ${name}:`, error);
+            throw error;
+        }
     }
+
 };
 
 export default PlayerController;
