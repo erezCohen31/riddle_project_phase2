@@ -80,10 +80,12 @@ const RiddleController = {
 
     async updateRiddle(req, res) {
         try {
-            const { id } = req.params;
-            const requestBody = req.body;
-            const updatedRiddle = requestBody;
+            const allowedFields = ['name', 'taskDescription', 'correctAnswer', 'choices'];
 
+            const { id } = req.params;
+            const updatedRiddle = Object.fromEntries(
+                Object.entries(req.body).filter(([key]) => allowedFields.includes(key))
+            );
             if (!updatedRiddle) {
                 return res.status(400).json({ message: 'Riddle data is required' });
             }

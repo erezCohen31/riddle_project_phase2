@@ -1,11 +1,14 @@
 import express from "express";
 import riddleRoutes from "./routes/riddleRoutes.js";
 import playerRoutes from "./routes/playerRoutes.js";
+import cookieParser from "cookie-parser";
 
 const app = express();
 const PORT = process.env.PORT || 4546;
 
 app.use(express.json());
+app.use(cookieParser());
+
 
 app.use('/api/riddles', riddleRoutes);
 app.use('/api/players', playerRoutes);

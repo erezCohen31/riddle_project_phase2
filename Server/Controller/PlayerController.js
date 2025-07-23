@@ -6,6 +6,9 @@ import {
     deletePlayer,
     getLeaderboard
 } from '../Service/PlayerService.js';
+import jwt from 'jsonwebtoken';
+
+const SECRET = process.env.JWT_SECRET
 
 const handleError = (res, error) => {
     console.error('Error:', error);
@@ -122,8 +125,17 @@ const PlayerController = {
         try {
             const { player, created } = await findOrCreatePlayer({ name, password, role });
 
+            const token = jwt.sign(
+                { id: player.id, name: player.name, role: player.role },
+                SECRET,
+                { expiresIn: "1h" }
+            );
+            res.cookie('token', token, {
+                httpOnly: true,
+                sameSite: 'Strict',
+            });
             const message = created ? "Player successfully created" : "Login successful";
-            return res.status(200).json({ message, player });
+            return res.status(200).json({ message, token, player });;
         } catch (error) {
             console.error(error);
             res.status(500).json({

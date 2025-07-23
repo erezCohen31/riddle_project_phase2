@@ -114,7 +114,7 @@ const RiddleDal = {
                     { returnDocument: "after" }
                 );
 
-                updatedRiddle = result;
+                updatedRiddle = result.value;
             });
 
             if (!updatedRiddle) {
