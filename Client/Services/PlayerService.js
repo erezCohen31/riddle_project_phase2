@@ -22,7 +22,7 @@ const PlayerService = {
 
     async deletePlayer(token) {
         const nameToDelete = readline.question('Enter the player name to delete: ').trim();
-        const confirmation = readline.question(`Are you sure you want to delete player with ID ${id}? (y/n): `).trim().toLowerCase();
+        const confirmation = readline.question(`Are you sure you want to delete player ${nameToDelete}? (y/n): `).trim().toLowerCase();
 
         if (confirmation !== 'y') {
             console.log("Deletion cancelled.");
