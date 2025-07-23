@@ -5,7 +5,11 @@ const handleResponse = async (response) => {
         const error = await response.json().catch(() => ({}));
         throw new Error(error.message || `HTTP error! status: ${response.status}`);
     }
-    return response.json();
+    if (response.status === 204) {
+        return null;
+    }
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
 };
 
 const PlayerController = {
@@ -103,7 +107,7 @@ const PlayerController = {
             await handleResponse(response);
             return true;
         } catch (error) {
-            console.error(`Failed to delete player ${id}:`, error);
+            console.error(`Failed to delete player ${name}:`, error);
             throw new Error(`Error deleting player: ${error.message}`);
         }
     },
