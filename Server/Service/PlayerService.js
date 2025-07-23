@@ -51,10 +51,10 @@ export async function getAllPlayers() {
     }
 }
 
-export async function deletePlayer(playerId) {
+export async function deletePlayer(playerName) {
     try {
-        await PlayerDAL.deletePlayer(playerId);
-        console.log(`Player with ID ${playerId} deleted successfully`);
+        await PlayerDAL.deletePlayer(playerName);
+        console.log(`Player ${playerName} deleted successfully`);
         return true;
     } catch (err) {
         console.error("Error deleting player:", err.message);
@@ -73,11 +73,7 @@ export async function getLeaderboard(lineCount) {
 
 export async function updatePlayerRole(name, role) {
     try {
-        return await PlayerDAL.findOneAndUpdate(
-            { name: name },
-            { $set: { role } },
-            { new: true }
-        );
+        return await PlayerDAL.findOneAndUpdate(name, role);
     } catch (error) {
         console.error("Error updating player role:", error);
         throw error;

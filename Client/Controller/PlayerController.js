@@ -87,13 +87,13 @@ const PlayerController = {
         }
     },
 
-    async deletePlayer(id, token) {
-        if (!id) {
+    async deletePlayer(name, token) {
+        if (!name) {
             throw new Error('Player ID is required');
         }
 
         try {
-            const response = await fetch(`${API_URL}/${id}`, {
+            const response = await fetch(`${API_URL}/${name}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -134,8 +134,7 @@ const PlayerController = {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ role: newRole }),
-                credentials: 'include'
+                body: JSON.stringify({ role: newRole })
             });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
