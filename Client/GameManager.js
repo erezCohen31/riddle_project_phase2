@@ -16,12 +16,14 @@ export default async function RunMainMenu() {
         while (!isQuit) {
             console.log(`\nMain Menu:`);
             console.log(`1. To play`);
-            console.log(`2. Modify riddles`);
-            console.log(`3. Show scores`);
+            console.log(`2. Show scores`);
+            if (player.role === 'admin' || player.role === 'user') {
+                console.log(`3. Modify riddles`);
+            }
             if (player.role === 'admin') {
                 console.log(`4. Manage players`);
             }
-            console.log(`5. Quit`);
+            console.log(`q. Quit`);
 
 
             const choice = readline.question();
@@ -31,19 +33,23 @@ export default async function RunMainMenu() {
                     await RiddleService.runRiddles(player, token);
                     break;
                 case "2":
-                    await ModifyRiddlesMenu(role, token);
+                    await PlayerService.showScore(token);
                     break;
                 case "3":
-                    await PlayerService.showScore(token);
+                    if (player.role === 'admin' || player.role === 'user') {
+                        await ModifyRiddlesMenu(role, token);
+                    } else {
+                        console.log("Unauthorized: You are not allowed to modify riddles.");
+                    }
                     break;
                 case "4":
                     if (player.role === 'admin') {
-                        await ManagePlayersMenu(role, token);
+                        await ManagePlayersMenu(token);
                     } else {
                         console.log("Unauthorized: Only admins can manage players.");
                     }
                     break;
-                case "5":
+                case "q":
                     isQuit = true;
                     console.log(`Bye bye`);
                     break;
@@ -58,19 +64,21 @@ export default async function RunMainMenu() {
     }
 }
 
-async function ModifyRiddlesMenu(role, token) {
+export async function ModifyRiddlesMenu(role, token) {
     let isQuit = false;
 
     while (!isQuit) {
         console.log('\n=== Riddle Management ===');
         console.log('1. Create a new riddle');
         console.log('2. Read all riddles');
-        console.log('3. Update an existing riddle');
-        console.log('4. Delete a riddle');
-        console.log('5. Exit\n');
+        if (role === 'admin') {
+            console.log('3. Update an existing riddle');
+            console.log('4. Delete a riddle');
+        }
+        console.log('q. Exit\n');
 
         try {
-            const choice = readline.question('Enter your choice (1-5): ').trim();
+            const choice = readline.question('Enter your choice: ').trim();
 
             switch (choice) {
                 case '1':
@@ -80,17 +88,25 @@ async function ModifyRiddlesMenu(role, token) {
                     await RiddleService.showAllRiddles(role, token);
                     break;
                 case '3':
-                    await RiddleService.changeRiddle(role, token);
+                    if (role === 'admin') {
+                        await RiddleService.changeRiddle(role, token);
+                    } else {
+                        console.log('Unauthorized: Only admins can update riddles.');
+                    }
                     break;
                 case '4':
-                    await RiddleService.deleteRiddle(role, token);
+                    if (role === 'admin') {
+                        await RiddleService.deleteRiddle(role, token);
+                    } else {
+                        console.log('Unauthorized: Only admins can delete riddles.');
+                    }
                     break;
-                case '5':
+                case 'q':
                     isQuit = true;
                     console.log('Exiting riddle management...');
                     break;
                 default:
-                    console.log('Invalid choice. Please enter a number between 1 and 5.');
+                    console.log('Invalid choice. Please enter a valid option.');
             }
         } catch (error) {
             console.error(`Error: ${error.message}`);
@@ -98,7 +114,8 @@ async function ModifyRiddlesMenu(role, token) {
     }
 }
 
-async function ManagePlayersMenu(token) {
+
+export async function ManagePlayersMenu(token) {
     let isQuit = false;
 
     while (!isQuit) {
