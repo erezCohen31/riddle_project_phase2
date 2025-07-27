@@ -1,119 +1,80 @@
 const API_URL = 'https://riddle-game-api.onrender.com/api/riddles';
 
+const handleResponse = async (response) => {
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || `HTTP error! status: ${response.status}`);
+    }
+    if (response.status === 204) {
+        return null;
+    }
+    const text = await response.text();
+    return text ? JSON.parse(text) : null;
+};
+
 const RiddleController = {
     async getAllRiddles(token) {
-        try {
-            const response = await fetch(API_URL, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        const response = await fetch(API_URL, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
-            return await response.json();
-        } catch (error) {
-            console.error('Error in getAllRiddles:', error);
-            throw error;
-        }
+        });
+        return await handleResponse(response);
     },
 
     async getNumOfRiddles(count, token) {
-        try {
-            const response = await fetch(`${API_URL}/count/${count}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        const response = await fetch(`${API_URL}/count/${count}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
-            return await response.json();
-        } catch (error) {
-            console.error('Error in getNumOfRiddles:', error);
-            throw error;
-        }
+        });
+        return await handleResponse(response);
     },
 
     async getRiddleById(id, token) {
-        try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+        const response = await fetch(`${API_URL}/${id}`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
-            return await response.json();
-        } catch (error) {
-            console.error(`Error fetching riddle with id ${id}:`, error);
-            throw error;
-        }
+        });
+        return await handleResponse(response);
     },
 
     async addRiddle(riddleData, token) {
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(riddleData)
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error('Error adding riddle:', error);
-            throw error;
-        }
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(riddleData)
+        });
+        return await handleResponse(response);
     },
 
     async updateRiddle(id, riddleData, token) {
-        try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(riddleData)
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error(`Error updating riddle with id ${id}:`, error);
-            throw error;
-        }
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(riddleData)
+        });
+        return await handleResponse(response);
     },
 
     async deleteRiddle(id, token) {
-        try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            if (response.status === 204) {
-                return null;
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
             }
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error(`Error deleting riddle with id ${id}:`, error);
-            throw error;
-        }
+        });
+        return await handleResponse(response);
     }
 };
 

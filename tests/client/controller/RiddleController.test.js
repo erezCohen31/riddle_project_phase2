@@ -19,7 +19,7 @@ describe('RiddleController', () => {
         fetchStub.resolves({
             ok: true,
             status: 200,
-            json: async () => fakeRiddles,
+            text: async () => JSON.stringify(fakeRiddles),
         });
 
         const result = await RiddleController.getAllRiddles('token123');
@@ -35,7 +35,7 @@ describe('RiddleController', () => {
         fetchStub.resolves({
             ok: true,
             status: 200,
-            json: async () => fakeRiddles,
+            text: async () => JSON.stringify(fakeRiddles),
         });
 
         const result = await RiddleController.getNumOfRiddles(count, 'token');
@@ -51,7 +51,7 @@ describe('RiddleController', () => {
         fetchStub.resolves({
             ok: true,
             status: 200,
-            json: async () => fakeRiddle,
+            text: async () => JSON.stringify(fakeRiddle),
         });
 
         const result = await RiddleController.getRiddleById(id, 'token');
@@ -66,7 +66,7 @@ describe('RiddleController', () => {
         fetchStub.resolves({
             ok: true,
             status: 201,
-            json: async () => riddleData,
+            text: async () => JSON.stringify(riddleData),
         });
 
         const result = await RiddleController.addRiddle(riddleData, 'token');
@@ -85,7 +85,7 @@ describe('RiddleController', () => {
         fetchStub.resolves({
             ok: true,
             status: 200,
-            json: async () => updateData,
+            text: async () => JSON.stringify(updateData),
         });
 
         const result = await RiddleController.updateRiddle(id, updateData, 'token');
@@ -116,11 +116,13 @@ describe('RiddleController', () => {
             ok: false,
             status: 400,
             text: async () => JSON.stringify({ message: 'Bad request' }),
+            json: async () => ({ message: 'Bad request' }),
         });
 
         await assert.rejects(
             () => RiddleController.deleteRiddle(9, 'token'),
-            /HTTP error! status: 400/
+            /Bad request/
         );
     });
+
 });
