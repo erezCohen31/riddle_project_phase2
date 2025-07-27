@@ -102,6 +102,7 @@ describe('PlayerController', () => {
         const fakeResponse = {
             ok: true,
             status: 200,
+            text: async () => JSON.stringify({ success: true }),
             json: async () => ({ success: true }),
         };
         fetchStub.resolves(fakeResponse);
@@ -123,7 +124,7 @@ describe('PlayerController', () => {
         fetchStub.resolves(fakeResponse);
 
         await assert.rejects(() => PlayerController.updateRole('Bob', 'admin', 'token'), {
-            message: 'HTTP error! status: 400',
+            message: /Bad request/,
         });
     });
 });
