@@ -6,16 +6,19 @@ const RiddleDal = {
 
     async addRiddle(riddle) {
         try {
+            let insertedId = null;
             await connectMongoDB(async (client) => {
 
                 const result = await collection.insertOne(riddle);
 
                 if (result.acknowledged) {
+                    insertedId = result.insertedId;
                     console.log('✅ Riddle added with ID:', result.insertedId);
                 } else {
                     throw new Error('❌ Failed to insert riddle. Acknowledgement failed.');
                 }
             });
+            return insertedId;
         } catch (error) {
             console.error('❌ Error occurred during riddle insertion:', error);
             throw error;
@@ -36,16 +39,19 @@ const RiddleDal = {
     },
     async deleteRiddleById(currentid) {
         try {
+            let deleted = false;
             await connectMongoDB(async () => {
 
                 const result = await collection.deleteOne({ id: currentid });
 
                 if (result.deletedCount === 1) {
                     console.log(`🗑️ Riddle with ID ${currentid} successfully deleted.`);
+                    deleted = true;
                 } else {
-                    console.warn(`⚠️ No riddle found with ID ${currentid}.`);
+                    console.warn(`⚠️ No riddle found with ID ${currentid}`);
                 }
             });
+            return deleted;
         } catch (error) {
             console.error('❌ Error deleting riddle:', error);
             throw error;
@@ -63,7 +69,7 @@ const RiddleDal = {
             if (riddle) {
                 console.log(`🔍 Riddle found:`, riddle);
             } else {
-                console.warn(`⚠️ No riddle found with ID ${id}`);
+                console.warn(`⚠️ No riddle found with ID ${currentid}`);
             }
 
             return riddle;
@@ -71,7 +77,8 @@ const RiddleDal = {
             console.error('❌ Error fetching riddle:', error.message);
             throw error;
         }
-    }, async getAllRiddles() {
+    },
+    async getAllRiddles() {
         try {
             let riddles = [];
 
