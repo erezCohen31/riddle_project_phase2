@@ -50,12 +50,17 @@ const RiddleService = {
                 totalTime += time;
             }
 
-            const timeInSeconds = Math.round(totalTime / 1000);
+            const timePerRiddle = totalTime / chosenRiddles.length
+            const timeInSeconds = Math.round(timePerRiddle / 1000);
+            const totalTimeInSeconds = Math.round(totalTime / 1000);
+
+
 
             try {
                 await PlayerController.updateTime(player.id, timeInSeconds, token);
 
-                console.log(`\nTotal time for this round: ${timeInSeconds} seconds`);
+                console.log(`\nTotal time for this round: ${totalTimeInSeconds} seconds`);
+                console.log(`Time per riddle for this round: ${timeInSeconds} seconds`);
                 console.log(`Your best time so far: ${player.lowestTime} seconds`);
                 console.log(`\nGreat job, ${player.name}!`);
             } catch (error) {
