@@ -103,7 +103,6 @@ describe('PlayerController', () => {
             ok: true,
             status: 200,
             text: async () => JSON.stringify({ success: true }),
-            json: async () => ({ success: true }),
         };
         fetchStub.resolves(fakeResponse);
 

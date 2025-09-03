@@ -115,7 +115,6 @@ describe('RiddleController', () => {
         fetchStub.resolves({
             ok: false,
             status: 400,
-            text: async () => JSON.stringify({ message: 'Bad request' }),
             json: async () => ({ message: 'Bad request' }),
         });
 
